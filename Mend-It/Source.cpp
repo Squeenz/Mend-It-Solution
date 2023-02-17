@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -28,13 +29,104 @@ tracking.txt - all tracking information of orders
 class Branch
 {
 public:
-
+	virtual string getName() const = 0;
+	virtual vector<string> getStoreItems() const = 0;
+	virtual vector<string> getStoreAccesories() const = 0;
 };
 
+class Treforest : public Branch
+{
+public:
+	string getName() const override
+	{
+		return "Treforest";
+	};
+	vector<string> getStoreItems() const override 
+	{
+		return { "hammer", "screwdriver", "wrench", "nail" };
+	}
+	vector<string> getStoreAccesories() const override {
+		return { "gloves", "safety glasses", "mask" };
+	}
+};
+
+class Pontypridd : public Branch
+{
+public:
+	string getName() const override
+	{
+		return "Pontypridd";
+	};
+	vector<string> getStoreItems() const override 
+	{
+		return { "drill", "saw", "pliers", "bolt" };
+	}
+	vector<string> getStoreAccesories() const override {
+		return { "tape measure", "level", "utility knife" };
+	}
+};
+
+class Cardiff : public Branch
+{
+public:
+	string getName() const override
+	{
+		return "Cardiff";
+	}
+	vector<string> getStoreItems() const override
+	{
+		return { "paint", "brush", "roller", "putty knife" };
+	}
+	vector<string> getStoreAccesories() const override {
+		return { "sandpaper", "drop cloth", "painter's tape" };
+	}
+};
+
+class BranchFactory
+{
+public:
+	static Branch* createBranch(const string& branchName)
+	{
+		if (branchName == "Treforest")
+		{
+			return new Treforest();
+		}
+		else if (branchName == "Pontypridd")
+		{
+			return new Pontypridd();
+		}
+		else if (branchName == "Cardiff")
+		{
+			return new Cardiff();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+};
+
+/*
+-----------------------------------------------------------------------
+Create the pontypridd branch and print out the items that it holds
+-----------------------------------------------------------------------
+	Branch* Pontypridd = BranchFactory::createBranch("Pontypridd");
+	cout << Pontypridd->getName() << endl;
+	cout << "Pontypridd's Store Items: " << endl;
+	for (int i = 0; i < Pontypridd->getStoreItems().size(); i++)
+	{
+		cout << Pontypridd->getStoreItems().at(i) << ", ";
+	}
+
+	cout << endl;
+	cout << "Pontypridd's Store Accesories: " << endl;
+	for (int i = 0; i < Pontypridd->getStoreAccesories().size(); i++)
+	{
+		cout << Pontypridd->getStoreAccesories().at(i) << ", ";
+	}
+*/
 
 int main()
 {
-
-
 
 }
