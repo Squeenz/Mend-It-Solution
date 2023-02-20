@@ -106,6 +106,34 @@ public:
 	}
 };
 
+class Product
+{
+public:
+	virtual string description() = 0;
+	virtual double price() = 0;
+};
+
+class Item : public Product
+{
+public:
+	Item(string title, double price) : title_(title), price_(price) {}
+	string description() override { return title_;  }
+	double price() override { return price_; }
+private:
+	string title_;
+	double price_;
+};
+
+class ProductDecorator : public Product
+{
+public:
+	ProductDecorator(Product* product) : product_(product) {}
+	string description() override { return product_->description(); }
+	double price() override { return product_->price(); }
+protected:
+	Product* product_;
+};
+
 /*
 -----------------------------------------------------------------------
 Create the pontypridd branch and print out the items that it holds
