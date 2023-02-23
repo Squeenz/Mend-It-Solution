@@ -146,9 +146,12 @@ public:
 class Accessory : public ProductDecorator
 {
 public:
-	Accessory(Product* product, string accesory, double price) : ProductDecorator(product) {};
-	string description() override { return product_->description() + ", Accessory: " << accesory; }
-	double price() override { return product_->price(); }
+	Accessory(Product* product, string title, double price) : ProductDecorator(product), title_(title), price_(price){};
+	string description() override { return product_->description() + ", " + title_; }
+	double price() override { return product_->price() + price_; }
+private:
+	string title_;
+	double price_;
 };
 
 /*
@@ -185,14 +188,24 @@ int main()
 		string itemName = element.first;
 		double itemPrice = element.second;
 
-
 		cout << "Order" << endl;
 		Product* item = new Item(itemName, itemPrice);
-		cout << item->description() << " : " << item->price() << endl;
 
-		Product* nextDay = new NextDayDelivery(item);
-		cout << nextDay->description() << " : " << nextDay->price() << endl;
+		//cout << item->description() << " : " << item->price() << endl;
 
-		delete nextDay;
+		for (const auto& element : Pontypridd->getStoreAccesories())
+		{
+			string itemAccName = element.first;
+			double itemAccPrice = element.second;
+
+			Product* itemAcc = new Accessory(item, itemAccName, itemAccPrice);
+			cout << itemAcc->description() << " : " << itemAcc->price() << endl;
+
+			Product* nextDayDelivery = new NextDayDelivery(itemAcc);
+			cout << nextDayDelivery->description() << " : " << nextDayDelivery->price() << endl;
+
+			//delete itemAcc;
+			delete nextDayDelivery;
+		}
 	}
 }
