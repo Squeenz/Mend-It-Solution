@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <time.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -107,23 +108,23 @@ public:
 
 class Item : public Product
 {
+private:
+	string title_;
+	double price_;
 public:
 	Item(string title, double price) : title_(title), price_(price) {};
 	string description() override { return title_;  }
 	double price() override { return price_; }
-private:
-	string title_;
-	double price_;
 };
 
 class ProductDecorator : public Product
 {
+protected:
+	Product* product_;
 public:
 	ProductDecorator(Product* product) : product_(product) {};
 	string description() override { return product_->description(); }
 	double price() override { return product_->price(); }
-protected:
-	Product* product_;
 };
 
 //Add a check to only one can be selected as an option
@@ -145,41 +146,173 @@ public:
 
 class Accessory : public ProductDecorator
 {
+private:
+	string title_;
+	double price_;
 public:
 	Accessory(Product* product, string title, double price) : ProductDecorator(product), title_(title), price_(price){};
 	string description() override { return product_->description() + ", " + title_; }
 	double price() override { return product_->price() + price_; }
+};
+
+//Work in progress 
+//Going to work on the interface for now then comeback to this.
+class Observer
+{
+public:
+	virtual void update() = 0;
+};
+
+class Subject
+{
+public:
+	virtual void registerObserver() = 0;
+	virtual void unregisterObserver() = 0;
+	virtual void notifyObserver() = 0;
+};
+
+//re-code all of the shit code.
+class Interface
+{
 private:
-	string title_;
-	double price_;
+	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff"};
+	string currentBranch_;
+	int choice_;
+public:
+	Interface()
+	{
+		//Interface setup
+		if (currentBranch_ == "")
+		{
+			currentBranch_ = "Branches";
+		}
+
+		cout << "=================================" << endl;
+		cout << " Mend It Solutions  ::  " << currentBranch_ << endl;
+		cout << "=================================" << endl;
+		for (int i = 0; i < branches.size(); i++)
+		{
+			cout << i + 1 << " :: " << branches.at(i) << endl;
+		}
+		cout << "=================================" << endl;
+		cout << "Choose a branch (1-3): ";
+		this->getInput();
+		cout << "=================================" << endl;
+
+		this->selectedBranch(choice_);
+	}
+
+	int getInput()
+	{
+		cin >> choice_;
+		return choice_;
+	}
+	//fix everything
+	void selectedBranch(int branchChoice)
+	{
+		currentBranch_ = branches.at(choice_-1);
+		
+		Branch* branch = BranchFactory::createBranch(currentBranch_);
+		map<string, double>::iterator it;
+
+		cout << "====================================" << endl;
+		cout << currentBranch_ << "  ::  MAIN ITEMS" << endl;
+		cout << "====================================" << endl;
+		for ( const auto& object : branch->getStoreItems())
+		{
+			string name = object.first;
+			double price = object.second;
+
+			cout << name << "  ::  " << price << endl;
+		}
+
+		cout << "====================================" << endl;
+		cout << currentBranch_ << "  ::  ACCESORIES" << endl;
+		cout << "====================================" << endl;
+		for (const auto& object : branch->getStoreAccesories())
+		{
+			string name = object.first;
+			double price = object.second;
+
+			cout << name << "  ::  " << price << endl;
+		}
+
+		//testing decorator pattern
+		cout << "====================================" << endl;
+		cout << currentBranch_ << "  ::  ORDER TEST" << endl;
+		cout << "====================================" << endl;
+
+		//item we want for the test
+		string itemName = "hammer";
+		double itemPrice = 0;
+		
+		for (const auto& object : branch->getStoreItems())
+		{
+			string name = object.first;
+			double price = object.second;
+
+			if (name == itemName)
+			{
+				itemPrice = price;
+				break;
+			}
+		}
+
+		Product* orderItem = new Item(itemName, itemPrice);
+
+		//accesory user wants
+		string accItemName = "gloves";
+		double accItemPrice = 0;
+
+		for (const auto& object : branch->getStoreAccesories())
+		{
+			string name = object.first;
+			double price = object.second;
+
+			if (name == accItemName)
+			{
+				accItemPrice = price;
+				break;
+			}
+		}
+
+		Product* accItem = new Accessory(orderItem, accItemName, accItemPrice);
+
+		cout << accItem->description() << " :: " << accItem->price() << endl;
+
+		string accItemName2 = "safety glasses";
+		double accItemPrice2 = 0;
+
+		for (const auto& object : branch->getStoreAccesories())
+		{
+			string name = object.first;
+			double price = object.second;
+
+			if (name == accItemName2)
+			{
+				accItemPrice2 = price;
+				break;
+			}
+		}
+		
+		Product* accItem2 = new Accessory(accItem, accItemName2, accItemPrice2);
+		cout << accItem2->description() << " :: " << accItem2->price() << endl;
+
+
+		/*
+		Product* orderItem = new Item(itemName, itemPrice);
+		
+		cout << "Normal Order of item: " << endl;
+		cout << orderItem->description() << " :: " << orderItem->price() << endl;
+		
+		Product* orderWithNext = new NextDayDelivery(orderItem);
+		cout << "Order with next day delivery: " << endl;
+		cout << orderWithNext->description() << " :: " << orderWithNext->price() << endl;
+		*/
+	}
 };
 
 /*
-
-Creates the pontypridd branch and iterates through the items map
-
-	Branch* Pontypridd = BranchFactory::createBranch("Pontypridd");
-	map<string, double>::iterator it;
-
-	// Iterate using iterator in for loop
-	for (const auto& element : Pontypridd->getStoreItems()) {
-		string itemName = element.first;
-		double itemPrice = element.second;
-
-
-		cout << "Order" << endl;
-		Product* item = new Item(itemName, itemPrice);
-		cout << item->description() << " : " << item->price() << endl;
-
-		Product* nextDay = new NextDayDelivery(item);
-		cout << nextDay->description() << " : " << nextDay->price() << endl;
-
-		delete nextDay;
-	}
-*/
-
-int main()
-{
 	Branch* Pontypridd = BranchFactory::createBranch("Pontypridd");
 	map<string, double>::iterator it;
 
@@ -208,4 +341,10 @@ int main()
 			delete nextDayDelivery;
 		}
 	}
+*/
+
+int main()
+{
+	Interface* menu = new Interface;
+
 }
