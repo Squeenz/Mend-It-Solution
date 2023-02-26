@@ -3,6 +3,7 @@
 #include <map>
 #include <time.h>
 #include <stdlib.h>
+#include<limits>
 
 using namespace std;
 
@@ -178,40 +179,91 @@ private:
 	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff"};
 	string currentBranch_;
 	int choice_;
+	bool end_ = false;
 public:
 	Interface()
 	{
-		//Interface setup
-		if (currentBranch_ == "")
+		//If the current branch is empty then display branches otherwise display the selected branch
+		currentBranch_ = (currentBranch_ == "") ? currentBranch_ = "Branches" : currentBranch_ = currentBranch_;
+		string whatToShow = "branches";
+
+		while (end_ != true)
 		{
-			currentBranch_ = "Branches";
+			cout << "=================================" << endl;
+			cout << " Mend It Solutions  ::  " << currentBranch_ << endl;
+			cout << "=================================" << endl;
+			
+			this->display(whatToShow);
+
+			cout << "=================================" << endl;
+			cout << "Choose a branch (1-3): ";
+
+			try {
+				this->getInput();
+				whatToShow = "items";
+			}
+			catch(const invalid_argument& error)
+			{
+				cout << error.what() << endl;
+			}
+			cout << "=================================" << endl;
+
+			this->selectedOption(choice_);
+			system("CLS");
 		}
 
-		cout << "=================================" << endl;
-		cout << " Mend It Solutions  ::  " << currentBranch_ << endl;
-		cout << "=================================" << endl;
-		for (int i = 0; i < branches.size(); i++)
-		{
-			cout << i + 1 << " :: " << branches.at(i) << endl;
-		}
-		cout << "=================================" << endl;
-		cout << "Choose a branch (1-3): ";
-		this->getInput();
-		cout << "=================================" << endl;
+	}
 
-		this->selectedBranch(choice_);
+	void display(string whatToShow)
+	{
+		if (whatToShow == "branches")
+		{
+			for (int i = 0; i < branches.size(); i++)
+			{
+				cout << i + 1 << " :: " << branches.at(i) << endl;
+			}
+		}
+		else if (whatToShow == "items")
+		{
+			Branch* branch = BranchFactory::createBranch(currentBranch_);
+
+			map<string, double>::iterator it;
+
+			for (const auto& object : branch->getStoreItems())
+			{
+				string name = object.first;
+				double price = object.second;
+
+				cout << name << "  ::  " << price << endl;
+			}
+		}
 	}
 
 	int getInput()
 	{
 		cin >> choice_;
-		return choice_;
+		if (choice_ > 3 || choice_ < 1)
+		{
+			throw invalid_argument("Incorrect number value, Try again");
+		}
+		//need to work on this thurwer to check if input is char etc..
+		else if (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max());
+			throw invalid_argument("Incorrect data type value, Try again");
+		}
+		else
+		{
+			return choice_;
+		}
 	}
 	//fix everything
-	void selectedBranch(int branchChoice)
+	void selectedOption(int branchChoice)
 	{
 		currentBranch_ = branches.at(choice_-1);
 		
+		/*
 		Branch* branch = BranchFactory::createBranch(currentBranch_);
 		map<string, double>::iterator it;
 
@@ -297,7 +349,7 @@ public:
 		
 		Product* accItem2 = new Accessory(accItem, accItemName2, accItemPrice2);
 		cout << accItem2->description() << " :: " << accItem2->price() << endl;
-
+		*/
 
 		/*
 		Product* orderItem = new Item(itemName, itemPrice);
