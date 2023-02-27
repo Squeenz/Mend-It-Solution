@@ -70,8 +70,8 @@ private:
 	map<string, double> branchItems = { {"paint", 100}, {"brush", 50}, {"roller", 30}, {"putty knife", 1} };
 	map<string, double> branchAccesories = { {"sandpaper", 5}, {"drop cloth", 10}, {"painter's tape", 15} };
 public:
-	string getName() const override{ return "Cardiff"; }
-	map<string, double> getStoreItems() const override{ return branchItems; }
+	string getName() const override { return "Cardiff"; }
+	map<string, double> getStoreItems() const override { return branchItems; }
 	map<string, double> getStoreAccesories() const override { return branchAccesories; }
 	~Cardiff() {};
 };
@@ -114,7 +114,7 @@ private:
 	double price_;
 public:
 	Item(string title, double price) : title_(title), price_(price) {};
-	string description() override { return title_;  }
+	string description() override { return title_; }
 	double price() override { return price_; }
 };
 
@@ -151,7 +151,7 @@ private:
 	string title_;
 	double price_;
 public:
-	Accessory(Product* product, string title, double price) : ProductDecorator(product), title_(title), price_(price){};
+	Accessory(Product* product, string title, double price) : ProductDecorator(product), title_(title), price_(price) {};
 	string description() override { return product_->description() + ", " + title_; }
 	double price() override { return product_->price() + price_; }
 };
@@ -176,39 +176,52 @@ public:
 class Interface
 {
 private:
-	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff"};
+	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff" };
+	string whatToDisplay;
 	string currentBranch_;
+	int amountOfOptions_;
 	int choice_;
 	bool end_ = false;
 public:
 	Interface()
 	{
-		//If the current branch is empty then display branches otherwise display the selected branch
-		currentBranch_ = (currentBranch_ == "") ? currentBranch_ = "Branches" : currentBranch_ = currentBranch_;
-		string whatToShow = "branches";
+		whatToDisplay = "branches";
 
 		while (end_ != true)
 		{
+			//If the current branch is empty then display branches otherwise display the selected branch
+			currentBranch_ = (currentBranch_ == "") ? "Branches" : currentBranch_;
+
 			cout << "=================================" << endl;
 			cout << " Mend It Solutions  ::  " << currentBranch_ << endl;
 			cout << "=================================" << endl;
-			
-			this->display(whatToShow);
+
+			display(whatToDisplay);
 
 			cout << "=================================" << endl;
-			cout << "Choose a branch (1-3): ";
+			cout << "Choose a an option (1-" << amountOfOptions_ << "): ";
 
 			try {
-				this->getInput();
-				whatToShow = "items";
+				if (whatToDisplay == "branches")
+				{
+					getInput();
+					currentBranch_ = branches.at(choice_ - 1);
+
+					whatToDisplay = "branchOptions";
+				}
+				else if (whatToDisplay == "branchOptions")
+				{
+					getInput();
+				}
 			}
-			catch(const invalid_argument& error)
+			catch (const invalid_argument& error)
 			{
 				cout << error.what() << endl;
 			}
 			cout << "=================================" << endl;
 
-			this->selectedOption(choice_);
+			selectedOption(whatToDisplay, choice_);
+
 			system("CLS");
 		}
 
@@ -218,14 +231,28 @@ public:
 	{
 		if (whatToShow == "branches")
 		{
+			amountOfOptions_ = branches.size();
 			for (int i = 0; i < branches.size(); i++)
 			{
-				cout << i + 1 << " :: " << branches.at(i) << endl;
+				cout << "      " << i + 1 << " :: " << branches.at(i) << endl;
+			}
+		}
+		else if (whatToShow == "branchOptions")
+		{
+			vector<string>options = { "Order Items", "Remove Item", "View Basket", "Order Tracking", "Go Back" };
+
+			amountOfOptions_ = options.size();
+
+			for (int i = 0; i < options.size(); i++)
+			{
+				cout << "      " << i + 1 << " :: " << options.at(i) << endl;
 			}
 		}
 		else if (whatToShow == "items")
 		{
 			Branch* branch = BranchFactory::createBranch(currentBranch_);
+
+			amountOfOptions_ = branch->getStoreItems().size();
 
 			map<string, double>::iterator it;
 
@@ -242,7 +269,7 @@ public:
 	int getInput()
 	{
 		cin >> choice_;
-		if (choice_ > 3 || choice_ < 1)
+		if (choice_ > amountOfOptions_ || choice_ < 1)
 		{
 			throw invalid_argument("Incorrect number value, Try again");
 		}
@@ -259,108 +286,31 @@ public:
 		}
 	}
 	//fix everything
-	void selectedOption(int branchChoice)
+	void selectedOption(string whatIsDisplayed, int choice)
 	{
-		currentBranch_ = branches.at(choice_-1);
-		
-		/*
-		Branch* branch = BranchFactory::createBranch(currentBranch_);
-		map<string, double>::iterator it;
-
-		cout << "====================================" << endl;
-		cout << currentBranch_ << "  ::  MAIN ITEMS" << endl;
-		cout << "====================================" << endl;
-		for ( const auto& object : branch->getStoreItems())
+		if (whatIsDisplayed == "branchOptions")
 		{
-			string name = object.first;
-			double price = object.second;
-
-			cout << name << "  ::  " << price << endl;
-		}
-
-		cout << "====================================" << endl;
-		cout << currentBranch_ << "  ::  ACCESORIES" << endl;
-		cout << "====================================" << endl;
-		for (const auto& object : branch->getStoreAccesories())
-		{
-			string name = object.first;
-			double price = object.second;
-
-			cout << name << "  ::  " << price << endl;
-		}
-
-		//testing decorator pattern
-		cout << "====================================" << endl;
-		cout << currentBranch_ << "  ::  ORDER TEST" << endl;
-		cout << "====================================" << endl;
-
-		//item we want for the test
-		string itemName = "hammer";
-		double itemPrice = 0;
-		
-		for (const auto& object : branch->getStoreItems())
-		{
-			string name = object.first;
-			double price = object.second;
-
-			if (name == itemName)
+			//activates multiple times which cause problems need to be fixed ASP!!!
+			switch (choice)
 			{
-				itemPrice = price;
+			case 1:
+				//whatToDisplay = (whatIsDisplayed == "branchOptions") ? whatToDisplay = "items" : whatToDisplay = "branches";
+				break;
+			case 2:
+				//whatToDisplay = "remove item";
+				break;
+			case 3:
+				//whatToDisplay = "view basket";
+				break;
+			case 4:
+				//whatToDisplay = "track order";
+				break;
+			case 5:
+				whatToDisplay = "branches";
+				currentBranch_ = "";
 				break;
 			}
 		}
-
-		Product* orderItem = new Item(itemName, itemPrice);
-
-		//accesory user wants
-		string accItemName = "gloves";
-		double accItemPrice = 0;
-
-		for (const auto& object : branch->getStoreAccesories())
-		{
-			string name = object.first;
-			double price = object.second;
-
-			if (name == accItemName)
-			{
-				accItemPrice = price;
-				break;
-			}
-		}
-
-		Product* accItem = new Accessory(orderItem, accItemName, accItemPrice);
-
-		cout << accItem->description() << " :: " << accItem->price() << endl;
-
-		string accItemName2 = "safety glasses";
-		double accItemPrice2 = 0;
-
-		for (const auto& object : branch->getStoreAccesories())
-		{
-			string name = object.first;
-			double price = object.second;
-
-			if (name == accItemName2)
-			{
-				accItemPrice2 = price;
-				break;
-			}
-		}
-		
-		Product* accItem2 = new Accessory(accItem, accItemName2, accItemPrice2);
-		cout << accItem2->description() << " :: " << accItem2->price() << endl;
-		*/
-
-		/*
-		Product* orderItem = new Item(itemName, itemPrice);
-		
-		cout << "Normal Order of item: " << endl;
-		cout << orderItem->description() << " :: " << orderItem->price() << endl;
-		
-		Product* orderWithNext = new NextDayDelivery(orderItem);
-		cout << "Order with next day delivery: " << endl;
-		cout << orderWithNext->description() << " :: " << orderWithNext->price() << endl;
-		*/
 	}
 };
 
