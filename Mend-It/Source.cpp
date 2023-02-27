@@ -7,30 +7,6 @@
 
 using namespace std;
 
-/*
-Display and select a branch
-2. Browse and order the main items
-3. Browse and order the accessories
-4. Cancel/Confirm the Order
-5. Pay for the order
-6. Track the order in real time (for both over the counter and online sales)
-*/
-
-/*
-If no existing files are found create template files
-branches.txt - holds all of the branches
-items.txt - all items that are sold
-orders.txt - all comfirmed and payed orders
-tracking.txt - all tracking information of orders
-*/
-
-/*Patterns to use
- -	Factory Desing = Structure of the branches
- -	Decorator Desing = Implementation of additional accessories
- -	Observer Pattern = Real-time Tracking
-*/
-
-//Factory Pattern - Line 30 to 108
 class Branch
 {
 public:
@@ -206,10 +182,28 @@ public:
 				{
 					getInput();
 					currentBranch_ = branches.at(choice_ - 1);
+					choice_ = 0;
 
 					whatToDisplay = "branchOptions";
 				}
 				else if (whatToDisplay == "branchOptions")
+				{
+					getInput();
+				}
+				else if (whatToDisplay == "items")
+				{
+					getInput();
+					choice_ = 0;
+				}
+				else if (whatToDisplay == "remove item")
+				{
+					getInput();
+				}
+				else if (whatToDisplay == "view basket")
+				{
+					getInput();
+				}
+				else if (whatToDisplay == "track order")
 				{
 					getInput();
 				}
@@ -232,6 +226,7 @@ public:
 		if (whatToShow == "branches")
 		{
 			amountOfOptions_ = branches.size();
+
 			for (int i = 0; i < branches.size(); i++)
 			{
 				cout << "      " << i + 1 << " :: " << branches.at(i) << endl;
@@ -252,17 +247,20 @@ public:
 		{
 			Branch* branch = BranchFactory::createBranch(currentBranch_);
 
-			amountOfOptions_ = branch->getStoreItems().size();
+			amountOfOptions_ = branch->getStoreItems().size() + 1;
 
 			map<string, double>::iterator it;
 
+			int i = 0;
 			for (const auto& object : branch->getStoreItems())
 			{
 				string name = object.first;
 				double price = object.second;
-
-				cout << name << "  ::  " << price << endl;
+				i++;
+				cout << "      " << i << " :: " << name << "  ::  " << price << endl;
 			}
+
+			cout << "      " << amountOfOptions_ << " :: " << "Go Back" << endl;
 		}
 	}
 
@@ -294,16 +292,16 @@ public:
 			switch (choice)
 			{
 			case 1:
-				//whatToDisplay = (whatIsDisplayed == "branchOptions") ? whatToDisplay = "items" : whatToDisplay = "branches";
+				whatToDisplay = (whatIsDisplayed == "branchOptions") ? whatToDisplay = "items" : whatToDisplay = "branches";
 				break;
 			case 2:
-				//whatToDisplay = "remove item";
+				whatToDisplay = "remove item";
 				break;
 			case 3:
-				//whatToDisplay = "view basket";
+				whatToDisplay = "view basket";
 				break;
 			case 4:
-				//whatToDisplay = "track order";
+				whatToDisplay = "track order";
 				break;
 			case 5:
 				whatToDisplay = "branches";
@@ -313,6 +311,12 @@ public:
 		}
 	}
 };
+
+int main()
+{
+	Interface* menu = new Interface;
+
+}
 
 /*
 	Branch* Pontypridd = BranchFactory::createBranch("Pontypridd");
@@ -344,9 +348,3 @@ public:
 		}
 	}
 */
-
-int main()
-{
-	Interface* menu = new Interface;
-
-}

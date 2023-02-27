@@ -1,5 +1,5 @@
 ﻿  Source.cpp
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(234,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(244,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(255,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(228,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(239,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(250,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   Mend-It.vcxproj -> C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\x64\Debug\Mend-It.exe
