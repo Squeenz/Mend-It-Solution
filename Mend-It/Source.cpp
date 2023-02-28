@@ -165,6 +165,8 @@ public:
 
 		while (end_ != true)
 		{
+			cout << choice_ << endl;
+
 			//If the current branch is empty then display branches otherwise display the selected branch
 			currentBranch_ = (currentBranch_ == "") ? "Branches" : currentBranch_;
 
@@ -193,18 +195,18 @@ public:
 				{
 					getInput();
 				}
-				else if (whatToDisplay == "remove item")
-				{
-					getInput();
-				}
-				else if (whatToDisplay == "view basket")
-				{
-					getInput();
-				}
-				else if (whatToDisplay == "track order")
-				{
-					getInput();
-				}
+				//else if (whatToDisplay == "remove item")
+				//{
+				//	getInput();
+				//}
+				//else if (whatToDisplay == "view basket")
+				//{
+				//	getInput();
+				//}
+				//else if (whatToDisplay == "track order")
+				//{
+				//	getInput();
+				//}
 			}
 			catch (const invalid_argument& error)
 			{
@@ -306,6 +308,15 @@ public:
 			case 5:
 				whatToDisplay = "branches";
 				currentBranch_ = "";
+				break;
+			}
+		}
+		else if (whatIsDisplayed == "items")
+		{
+			switch (choice)
+			{
+			case 5:
+				whatToDisplay = "branchOptions";
 				break;
 			}
 		}
