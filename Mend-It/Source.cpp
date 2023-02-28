@@ -180,10 +180,9 @@ public:
 			try {
 				if (whatToDisplay == "branches")
 				{
-					getInput();
+					getInput();	
 					currentBranch_ = branches.at(choice_ - 1);
 					choice_ = 0;
-
 					whatToDisplay = "branchOptions";
 				}
 				else if (whatToDisplay == "branchOptions")
@@ -193,7 +192,6 @@ public:
 				else if (whatToDisplay == "items")
 				{
 					getInput();
-					choice_ = 0;
 				}
 				else if (whatToDisplay == "remove item")
 				{
@@ -210,11 +208,13 @@ public:
 			}
 			catch (const invalid_argument& error)
 			{
-				cout << error.what() << endl;
+				cout << error.what();
+				getInput();
 			}
-			cout << "=================================" << endl;
 
 			selectedOption(whatToDisplay, choice_);
+
+			cout << "=================================" << endl;
 
 			system("CLS");
 		}
@@ -269,14 +269,14 @@ public:
 		cin >> choice_;
 		if (choice_ > amountOfOptions_ || choice_ < 1)
 		{
-			throw invalid_argument("Incorrect number value, Try again");
+			throw invalid_argument("Incorrect number value, Try again: ");
 		}
 		//need to work on this thurwer to check if input is char etc..
 		else if (cin.fail())
 		{
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max());
-			throw invalid_argument("Incorrect data type value, Try again");
+			throw invalid_argument("Incorrect data type value, Try again: ");
 		}
 		else
 		{
@@ -292,7 +292,7 @@ public:
 			switch (choice)
 			{
 			case 1:
-				whatToDisplay = (whatIsDisplayed == "branchOptions") ? whatToDisplay = "items" : whatToDisplay = "branches";
+				whatToDisplay = (whatIsDisplayed == "branchOptions") ? "items" : "branches";
 				break;
 			case 2:
 				whatToDisplay = "remove item";
