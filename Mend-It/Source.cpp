@@ -185,8 +185,13 @@ private:
 	string currentBranch_;
 	Branch* selectedBranch;
 	vector<vector<string>>branchItems;
+	vector<vector<string>>branchAccesories;
+	string currentAccesory;
+	double currentAccesoryPrice;
 	int amountOfOptions_;
 	int choice_;
+	int infoToShow;
+	bool typeOfInput;
 	bool end_ = false;
 public:
 	Interface()
@@ -207,23 +212,30 @@ public:
 			display(whatToDisplay);
 
 			cout << "=================================" << endl;
-			cout << "Choose an option (1-" << amountOfOptions_ << "): ";
+			if (typeOfInput == false)
+			{
+				cout << "Choose an option (1-" << amountOfOptions_ << "): ";
+			} 
+			else
+			{
+				cout << "Choose an option (y/n): ";
+			}
 
 			try {
 				if (whatToDisplay == "branches")
 				{
-					getInput();	
+					getInput(true);	
 					currentBranch_ = branches.at(choice_ - 1);
 					choice_ = 0;
 					whatToDisplay = "branchOptions";
 				}
 				else if (whatToDisplay == "branchOptions")
 				{
-					getInput();
+					getInput(true);
 				}
 				else if (whatToDisplay == "items")
 				{
-					getInput();
+					getInput(typeOfInput);
 				}
 				//else if (whatToDisplay == "remove item")
 				//{
@@ -241,7 +253,7 @@ public:
 			catch (const invalid_argument& error)
 			{
 				cout << error.what();
-				getInput();
+				getInput(true);
 			}
 
 			selectedOption(whatToDisplay, choice_);
@@ -280,6 +292,7 @@ public:
 			selectedBranch = BranchFactory::createBranch(currentBranch_);
 
 			branchItems = selectedBranch->getStoreItems();
+			branchAccesories = selectedBranch->getStoreAccesories();
 
 			amountOfOptions_ = branchItems.size() + 3;
 
@@ -300,51 +313,79 @@ public:
 			cout << "      " << amountOfOptions_ << " :: " << "Go Back" << endl;
 
 			cout << "=================================" << endl;
-			cout << "To order an item just select an item by their number" << endl;
-			cout << "For example: 1 would add the item 1 to the basket" << endl;
+			information(infoToShow);
 			cout << "=================================" << endl;
-			cout << "Basket = {";
-
-			double total = 0;
-			if (basket.size() != 0)
-			{
-				for (int i = 0; i < basket.size(); i++)
-				{
-					cout << " " << basket[i]->description() << " ";
-					cout << "$" << basket[i]->price() << ", ";
-
-					total = total + basket[i]->price();
-				}
-			}
-			else
-			{
-				cout << " 0 ";
-			}
-
-			cout << "}" << endl;
-			
-			cout << "Basket Total = { $ " << total << " }" << endl;
+			shoppingBasket();
  		}
 	}
 
-	int getInput()
+	void information(int infoToShow)
 	{
-		cin >> choice_;
-		if (choice_ > amountOfOptions_ || choice_ < 1)
+		switch (infoToShow)
 		{
-			throw invalid_argument("Incorrect number value, Try again: ");
+		case 1:
+			cout << "Would you like " << currentAccesory << " for $" << currentAccesoryPrice << " to be added to your order ? " << endl;
+			typeOfInput = true;
+			break;
+		case 2:
+			cout << "Would you like this {delivery option} to be added to your order?" << endl;
+			break;
+		default:
+			cout << "To order an item just select an item by their number" << endl;
+			cout << "For example: 1 would add the item 1 to the basket" << endl;
+			break;
 		}
-		//need to work on this thurwer to check if input is char etc..
-		else if (cin.fail())
+	}
+
+	void shoppingBasket()
+	{
+		cout << "Basket = {";
+
+		double total = 0;
+		if (basket.size() != 0)
 		{
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max());
-			throw invalid_argument("Incorrect data type value, Try again: ");
+			for (int i = 0; i < basket.size(); i++)
+			{
+				cout << " " << basket[i]->description() << " ";
+				cout << "$" << basket[i]->price() << ", ";
+
+				total = total + basket[i]->price();
+			}
 		}
 		else
 		{
-			return choice_;
+			cout << " 0 ";
 		}
+
+		cout << "}" << endl;
+
+		cout << "Basket Total = { $ " << total << " }" << endl;
+	}
+
+	int getInput(bool numberInput)
+	{
+		cin >> choice_;
+
+		if (numberInput == false)
+		{
+			if (choice_ > amountOfOptions_ || choice_ < 1)
+			{
+				throw invalid_argument("Incorrect number value, Try again: ");
+			}
+			//need to work on this thurwer to check if input is char etc..
+			else if (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max());
+				throw invalid_argument("Incorrect data type value, Try again: ");
+			}
+		}
+		else
+		{
+			
+		}
+
+		return choice_;
 	}
 
 	//fix everything
@@ -359,42 +400,41 @@ public:
 				whatToDisplay = (whatIsDisplayed == "branchOptions") ? "items" : "branches";
 				break;
 			case 2:
-				whatToDisplay = "remove item";
-				break;
-			case 3:
 				whatToDisplay = "view basket";
 				break;
-			case 4:
+			case 3:
 				whatToDisplay = "track order";
 				break;
-			case 5:
+			case 4:
 				whatToDisplay = "branches";
 				currentBranch_ = "";
 				break;
 			}
 		}
 		else if (whatIsDisplayed == "items")
-		{
-			//string item = branchItems[0][0];
-			//double itemPrice = stod(branchItems[0][1]);
-			
+		{			
 			/*loop through each item and give them an index so the program knows 
 			which input corresponds to which index for example. Item 1 will be index 1 and it will return hammer.*/
-
 			if (choice != 0)
 			{
-				for (int i = 0; i < this->branchItems.size(); i++)
+				for (int i = 0; i < this->branchItems.size() + 1; i++)
 				{
 					if (choice == i)
 					{
 						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
+						
+						if (choice - 1 < branchAccesories.size()) {
+							currentAccesory = this->branchAccesories[choice - 1][0];
+							currentAccesoryPrice = stod(this->branchAccesories[choice - 1][1]);
+						}
+
 						basket.push_back(item);
+						infoToShow = 1;
 						break;
 					}
 				}
 			}
 			
-
 			if (choice == amountOfOptions_ - 2)
 			{
 				//logic for removing an item from basket
