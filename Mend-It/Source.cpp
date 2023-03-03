@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <map>
 #include <time.h>
 #include <stdlib.h>
-#include<limits>
+#include <limits>
+#include <string>
 
 using namespace std;
 
@@ -11,44 +11,71 @@ class Branch
 {
 public:
 	virtual string getName() const = 0;
-	virtual map<string, double> getStoreItems() const = 0;
-	virtual map<string, double> getStoreAccesories() const = 0;
+	virtual vector<vector<string>> getStoreItems() const = 0;
+	virtual vector<vector<string>> getStoreAccesories() const = 0;
 	virtual ~Branch() {};
 };
+
+/*
+a way to implement 2d vectors instead of a map
+
+int main() {
+	//{ {"hammer", 100}, {"screwdriver", 50}, {"wrench", 30}, {"nail", 1} };
+	vector<vector<string>> const branchItems =
+	{
+	   { "hammer", "100" },
+	   { "screwdriver", "50" },
+	   { "wrench", "30" },
+	   { "nail", "1" }
+	};
+
+	for (int i = 0; i < branchItems.size(); i++)
+	{
+		for (int y = 0; y < branchItems[i].size(); y++)
+		{
+			cout << branchItems[i][y] << " ";
+		}
+		cout << endl;
+	};
+
+	cout << branchItems[0][0] << " " << branchItems[0][1];
+
+}
+*/
 
 class Treforest : public Branch
 {
 private:
-	map<string, double> branchItems = { {"hammer", 100}, {"screwdriver", 50}, {"wrench", 30}, {"nail", 1} };
-	map<string, double> branchAccesories = { {"gloves", 5}, {"safety glasses", 10}, {"mask", 15} };
+	vector<vector<string>> const branchItems = { { "hammer", "100" }, { "screwdriver", "50" }, { "wrench", "30" }, { "nail", "1" } };
+	vector<vector<string>> const branchAccesories = { {"gloves", "5"}, {"safety glasses", "10"}, {"mask", "15"} };
 public:
 	string getName() const override { return "Treforest"; }
-	map<string, double> getStoreItems() const override { return branchItems; }
-	map<string, double> getStoreAccesories() const override { return branchAccesories; }
+	vector<vector<string>> getStoreItems() const override { return branchItems; }
+	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
 	~Treforest() {};
 };
 
 class Pontypridd : public Branch
 {
 private:
-	map<string, double> branchItems = { {"drill", 100}, {"saw", 50}, {"pliers", 30}, {"bolt", 1} };
-	map<string, double> branchAccesories = { {"tape measure", 5}, {"level", 10}, {"utility knife", 15} };
+	vector<vector<string>> const branchItems = { {"drill", "100"}, {"saw", "50"}, {"pliers", "30"}, {"bolt", "1"} };
+	vector<vector<string>> const branchAccesories = { {"tape measure", "5"}, {"level", "10"}, {"utility knife", "15"}};
 public:
 	string getName() const override { return "Pontypridd"; };
-	map<string, double> getStoreItems() const override { return branchItems; }
-	map<string, double> getStoreAccesories() const override { return branchAccesories; }
+	vector<vector<string>> getStoreItems() const override { return branchItems; }
+	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
 	~Pontypridd() {};
 };
 
 class Cardiff : public Branch
 {
 private:
-	map<string, double> branchItems = { {"paint", 100}, {"brush", 50}, {"roller", 30}, {"putty knife", 1} };
-	map<string, double> branchAccesories = { {"sandpaper", 5}, {"drop cloth", 10}, {"painter's tape", 15} };
+	vector<vector<string>> const  branchItems = { {"paint", "100"}, {"brush", "50"}, {"roller", "30"}, {"putty knife", "1"}};
+	vector<vector<string>> const  branchAccesories = { {"sandpaper", "5"}, {"drop cloth", "10"}, {"painter's tape", "15"} };
 public:
 	string getName() const override { return "Cardiff"; }
-	map<string, double> getStoreItems() const override { return branchItems; }
-	map<string, double> getStoreAccesories() const override { return branchAccesories; }
+	vector<vector<string>> getStoreItems() const override { return branchItems; }
+	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
 	~Cardiff() {};
 };
 
@@ -153,8 +180,11 @@ class Interface
 {
 private:
 	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff" };
+	vector<Product*> basket;
 	string whatToDisplay;
 	string currentBranch_;
+	Branch* selectedBranch;
+	vector<vector<string>>branchItems;
 	int amountOfOptions_;
 	int choice_;
 	bool end_ = false;
@@ -177,7 +207,7 @@ public:
 			display(whatToDisplay);
 
 			cout << "=================================" << endl;
-			cout << "Choose a an option (1-" << amountOfOptions_ << "): ";
+			cout << "Choose an option (1-" << amountOfOptions_ << "): ";
 
 			try {
 				if (whatToDisplay == "branches")
@@ -236,7 +266,7 @@ public:
 		}
 		else if (whatToShow == "branchOptions")
 		{
-			vector<string>options = { "Order Items", "Remove Item", "View Basket", "Order Tracking", "Go Back" };
+			vector<string>options = { "Order Items", "View Basket", "Order Tracking", "Go Back"};
 
 			amountOfOptions_ = options.size();
 
@@ -247,23 +277,54 @@ public:
 		}
 		else if (whatToShow == "items")
 		{
-			Branch* branch = BranchFactory::createBranch(currentBranch_);
+			selectedBranch = BranchFactory::createBranch(currentBranch_);
 
-			amountOfOptions_ = branch->getStoreItems().size() + 1;
+			branchItems = selectedBranch->getStoreItems();
 
-			map<string, double>::iterator it;
+			amountOfOptions_ = branchItems.size() + 3;
 
-			int i = 0;
-			for (const auto& object : branch->getStoreItems())
+			for (int i = 0; i < branchItems.size(); i++)
 			{
-				string name = object.first;
-				double price = object.second;
-				i++;
-				cout << "      " << i << " :: " << name << "  ::  " << price << endl;
+				cout << "      " << i + 1 << " :: ";
+
+				for (int y = 0; y < branchItems[i].size(); y++)
+				{
+					cout << branchItems[i][y] << " $ ";
+				}
+				
+				cout << endl;
 			}
 
+			cout << "      " << amountOfOptions_ - 2 << " :: " << "Remove Item" << endl;
+			cout << "      " << amountOfOptions_ - 1 << " :: " << "Finish Order" << endl;
 			cout << "      " << amountOfOptions_ << " :: " << "Go Back" << endl;
-		}
+
+			cout << "=================================" << endl;
+			cout << "To order an item just select an item by their number" << endl;
+			cout << "For example: 1 would add the item 1 to the basket" << endl;
+			cout << "=================================" << endl;
+			cout << "Basket = {";
+
+			double total = 0;
+			if (basket.size() != 0)
+			{
+				for (int i = 0; i < basket.size(); i++)
+				{
+					cout << " " << basket[i]->description() << " ";
+					cout << "$" << basket[i]->price() << ", ";
+
+					total = total + basket[i]->price();
+				}
+			}
+			else
+			{
+				cout << " 0 ";
+			}
+
+			cout << "}" << endl;
+			
+			cout << "Basket Total = { $ " << total << " }" << endl;
+ 		}
 	}
 
 	int getInput()
@@ -285,6 +346,7 @@ public:
 			return choice_;
 		}
 	}
+
 	//fix everything
 	void selectedOption(string whatIsDisplayed, int choice)
 	{
@@ -313,11 +375,42 @@ public:
 		}
 		else if (whatIsDisplayed == "items")
 		{
-			switch (choice)
+			//string item = branchItems[0][0];
+			//double itemPrice = stod(branchItems[0][1]);
+			
+			/*loop through each item and give them an index so the program knows 
+			which input corresponds to which index for example. Item 1 will be index 1 and it will return hammer.*/
+
+			if (choice != 0)
 			{
-			case 5:
+				for (int i = 0; i < this->branchItems.size(); i++)
+				{
+					if (choice == i)
+					{
+						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
+						basket.push_back(item);
+						break;
+					}
+				}
+			}
+			
+
+			if (choice == amountOfOptions_ - 2)
+			{
+				//logic for removing an item from basket
+			}
+			
+			if (choice == amountOfOptions_- 1)
+			{
+				//logic for finish order
+			}
+			//Go back to display the branch options when the last option is selected
+			
+			if (choice == amountOfOptions_)
+			{
+				selectedBranch = nullptr;
+				//check to see if they want to leave because it will remove all items from the basket
 				whatToDisplay = "branchOptions";
-				break;
 			}
 		}
 	}
