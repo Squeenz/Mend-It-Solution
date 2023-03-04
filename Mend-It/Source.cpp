@@ -16,33 +16,6 @@ public:
 	virtual ~Branch() {};
 };
 
-/*
-a way to implement 2d vectors instead of a map
-
-int main() {
-	//{ {"hammer", 100}, {"screwdriver", 50}, {"wrench", 30}, {"nail", 1} };
-	vector<vector<string>> const branchItems =
-	{
-	   { "hammer", "100" },
-	   { "screwdriver", "50" },
-	   { "wrench", "30" },
-	   { "nail", "1" }
-	};
-
-	for (int i = 0; i < branchItems.size(); i++)
-	{
-		for (int y = 0; y < branchItems[i].size(); y++)
-		{
-			cout << branchItems[i][y] << " ";
-		}
-		cout << endl;
-	};
-
-	cout << branchItems[0][0] << " " << branchItems[0][1];
-
-}
-*/
-
 class Treforest : public Branch
 {
 private:
@@ -190,8 +163,9 @@ private:
 	double currentAccesoryPrice;
 	int amountOfOptions_;
 	int choice_;
+	string choiceStr_;
 	int infoToShow;
-	bool typeOfInput;
+	bool typeOfInput = true;
 	bool end_ = false;
 public:
 	Interface()
@@ -212,49 +186,43 @@ public:
 			display(whatToDisplay);
 
 			cout << "=================================" << endl;
-			if (typeOfInput == false)
+			if (typeOfInput == true)
 			{
 				cout << "Choose an option (1-" << amountOfOptions_ << "): ";
-			} 
+			}
 			else
 			{
 				cout << "Choose an option (y/n): ";
-			}
+			} 
 
-			try {
-				if (whatToDisplay == "branches")
-				{
-					getInput(true);	
-					currentBranch_ = branches.at(choice_ - 1);
-					choice_ = 0;
-					whatToDisplay = "branchOptions";
-				}
-				else if (whatToDisplay == "branchOptions")
-				{
-					getInput(true);
-				}
-				else if (whatToDisplay == "items")
-				{
-					getInput(typeOfInput);
-				}
-				//else if (whatToDisplay == "remove item")
-				//{
-				//	getInput();
-				//}
-				//else if (whatToDisplay == "view basket")
-				//{
-				//	getInput();
-				//}
-				//else if (whatToDisplay == "track order")
-				//{
-				//	getInput();
-				//}
-			}
-			catch (const invalid_argument& error)
+			
+			if (whatToDisplay == "branches")
 			{
-				cout << error.what();
+				getInput(true);	
+				currentBranch_ = branches.at(choice_ - 1);
+				choice_ = 0;
+				whatToDisplay = "branchOptions";
+			}
+			else if (whatToDisplay == "branchOptions")
+			{
 				getInput(true);
 			}
+			else if (whatToDisplay == "items")
+			{
+				getInput(typeOfInput);
+			}
+			//else if (whatToDisplay == "remove item")
+			//{
+			//	getInput();
+			//}
+			//else if (whatToDisplay == "view basket")
+			//{
+			//	getInput();
+			//}
+			//else if (whatToDisplay == "track order")
+			//{
+			//	getInput();
+			//}
 
 			selectedOption(whatToDisplay, choice_);
 
@@ -325,7 +293,7 @@ public:
 		{
 		case 1:
 			cout << "Would you like " << currentAccesory << " for $" << currentAccesoryPrice << " to be added to your order ? " << endl;
-			typeOfInput = true;
+			typeOfInput = false;
 			break;
 		case 2:
 			cout << "Would you like this {delivery option} to be added to your order?" << endl;
@@ -362,6 +330,57 @@ public:
 		cout << "Basket Total = { $ " << total << " }" << endl;
 	}
 
+	void getInput(bool numberInput)
+	{
+		try
+		{
+			if (typeOfInput == true)
+			{
+				if ((cin >> choice_) && numberInput) // check if the input is a number
+				{
+					if (choice_ > amountOfOptions_ || choice_ < 1)
+					{
+						cin.clear();
+						cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
+						throw invalid_argument("Incorrect number value, Try again: ");
+					}
+				}
+				else
+				{
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
+					throw invalid_argument("Incorrect data type value, Try again: ");
+				}
+			}
+			else
+			{
+				if ((cin >> choiceStr_) && choiceStr_ == "y" || choiceStr_ == "n")
+				{
+					choiceStr_;
+				}
+				else
+				{
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
+					throw invalid_argument("Incorrect answer, Try again (y/n): ");
+				}
+			}
+		}
+		catch (const invalid_argument& error)
+		{
+			cout << error.what();
+			if (whatToDisplay == "items")
+			{
+				getInput(typeOfInput);
+			}
+			else
+			{
+				getInput(true);
+			}
+		}
+	}
+
+	/*
 	int getInput(bool numberInput)
 	{
 		cin >> choice_;
@@ -380,13 +399,10 @@ public:
 				throw invalid_argument("Incorrect data type value, Try again: ");
 			}
 		}
-		else
-		{
-			
-		}
 
 		return choice_;
 	}
+	*/
 
 	//fix everything
 	void selectedOption(string whatIsDisplayed, int choice)
@@ -421,14 +437,17 @@ public:
 				{
 					if (choice == i)
 					{
+
+						/*
 						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
 						
 						if (choice - 1 < branchAccesories.size()) {
 							currentAccesory = this->branchAccesories[choice - 1][0];
 							currentAccesoryPrice = stod(this->branchAccesories[choice - 1][1]);
 						}
-
 						basket.push_back(item);
+
+						*/
 						infoToShow = 1;
 						break;
 					}
