@@ -302,9 +302,14 @@ public:
 			cout << "Would you like this {delivery option} to be added to your order?" << endl;
 			typeOfInput = false;
 			break;
+		case 3:
+			cout << "Are you sure you want to leave because the items in the basket will be deleted" << endl;
+			typeOfInput = false;
+			break;
 		default:
 			cout << "To order an item just select an item by their number" << endl;
 			cout << "For example: 1 would add the item 1 to the basket" << endl;
+			typeOfInput = true;
 			break;
 		}
 	}
@@ -462,9 +467,20 @@ public:
 			
 			if (choice == amountOfOptions_)
 			{
-				selectedBranch = nullptr;
-				//check to see if they want to leave because it will remove all items from the basket
-				whatToDisplay = "branchOptions";
+				infoToShow = 3;
+
+				if (choiceStr_ == "y")
+				{
+					selectedBranch = nullptr;
+					//check to see if they want to leave because it will remove all items from the basket
+					whatToDisplay = "branchOptions";
+					basket.clear();
+					typeOfInput = true;
+				}
+				else
+				{
+					infoToShow = 1;
+				}
 			}
 		}
 	}
