@@ -306,6 +306,10 @@ public:
 			cout << "Are you sure you want to leave because the items in the basket will be deleted" << endl;
 			typeOfInput = false;
 			break;
+		case 4:
+			cout << "Choose which item you want to remove by the number" << endl;
+			typeOfInput = true;
+			break;
 		default:
 			cout << "To order an item just select an item by their number" << endl;
 			cout << "For example: 1 would add the item 1 to the basket" << endl;
@@ -439,6 +443,7 @@ public:
 							Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
 							Accessory* addAccesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
 							basket.push_back(make_pair(item, addAccesory));
+							choice_ = 0;
 						}
 						else if (choiceStr_ == "n")
 						{
@@ -463,12 +468,10 @@ public:
 			{
 				//logic for finish order
 			}
+
 			//Go back to display the branch options when the last option is selected
-			
 			if (choice == amountOfOptions_)
 			{
-				infoToShow = 3;
-
 				if (choiceStr_ == "y")
 				{
 					selectedBranch = nullptr;
@@ -477,9 +480,13 @@ public:
 					basket.clear();
 					typeOfInput = true;
 				}
+				if (choiceStr_ == "n")
+				{
+					infoToShow = 0;
+				}
 				else
 				{
-					infoToShow = 1;
+					infoToShow = 3;
 				}
 			}
 		}
