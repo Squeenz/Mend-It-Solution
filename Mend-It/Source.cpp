@@ -153,7 +153,7 @@ class Interface
 {
 private:
 	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff" };
-	vector<Product*> basket;
+	vector<pair<Product*, Accessory*>> basket;
 	string whatToDisplay;
 	string currentBranch_;
 	Branch* selectedBranch;
@@ -296,6 +296,7 @@ public:
 			typeOfInput = false;
 			break;
 		case 2:
+			//fix this, make this happen after the y/n input also fix the y/n to normal input after it has been addded to the basket.
 			cout << "Would you like this {delivery option} to be added to your order?" << endl;
 			break;
 		default:
@@ -314,10 +315,9 @@ public:
 		{
 			for (int i = 0; i < basket.size(); i++)
 			{
-				cout << " " << basket[i]->description() << " ";
-				cout << "$" << basket[i]->price() << ", ";
+				cout << " " << basket[i].second->description() << " ";
 
-				total = total + basket[i]->price();
+				total = total + basket[i].second->price();
 			}
 		}
 		else
@@ -380,30 +380,6 @@ public:
 		}
 	}
 
-	/*
-	int getInput(bool numberInput)
-	{
-		cin >> choice_;
-
-		if (numberInput == false)
-		{
-			if (choice_ > amountOfOptions_ || choice_ < 1)
-			{
-				throw invalid_argument("Incorrect number value, Try again: ");
-			}
-			//need to work on this thurwer to check if input is char etc..
-			else if (cin.fail())
-			{
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max());
-				throw invalid_argument("Incorrect data type value, Try again: ");
-			}
-		}
-
-		return choice_;
-	}
-	*/
-
 	//fix everything
 	void selectedOption(string whatIsDisplayed, int choice)
 	{
@@ -437,18 +413,27 @@ public:
 				{
 					if (choice == i)
 					{
+						infoToShow = 1;
 
-						/*
-						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
-						
 						if (choice - 1 < branchAccesories.size()) {
 							currentAccesory = this->branchAccesories[choice - 1][0];
 							currentAccesoryPrice = stod(this->branchAccesories[choice - 1][1]);
 						}
-						basket.push_back(item);
 
-						*/
-						infoToShow = 1;
+						if (choiceStr_ == "y")
+						{
+							Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
+							Accessory* addAccesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
+							basket.push_back(make_pair(item, addAccesory));
+						}
+						else if (choiceStr_ == "n")
+						{
+							Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
+							Accessory* emptyAccesory = new Accessory(item, "", 0);
+							basket.push_back(make_pair(item, emptyAccesory));
+						}
+
+						//typeOfInput = true;
 						break;
 					}
 				}
