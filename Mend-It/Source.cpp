@@ -166,6 +166,7 @@ private:
 	string choiceStr_;
 	int infoToShow;
 	bool typeOfInput = true;
+	bool done = false;
 	bool end_ = false;
 public:
 	Interface()
@@ -174,7 +175,8 @@ public:
 
 		while (end_ != true)
 		{
-			cout << choice_ << endl;
+			cout << "CHOICE: " << choice_ << endl;
+			cout << "CHOICESTR: " << choiceStr_ << endl;
 
 			//If the current branch is empty then display branches otherwise display the selected branch
 			currentBranch_ = (currentBranch_ == "") ? "Branches" : currentBranch_;
@@ -198,14 +200,14 @@ public:
 			
 			if (whatToDisplay == "branches")
 			{
-				getInput(true);	
+				getInput(typeOfInput);
 				currentBranch_ = branches.at(choice_ - 1);
 				choice_ = 0;
 				whatToDisplay = "branchOptions";
 			}
 			else if (whatToDisplay == "branchOptions")
 			{
-				getInput(true);
+				getInput(typeOfInput);
 			}
 			else if (whatToDisplay == "items")
 			{
@@ -298,6 +300,7 @@ public:
 		case 2:
 			//fix this, make this happen after the y/n input also fix the y/n to normal input after it has been addded to the basket.
 			cout << "Would you like this {delivery option} to be added to your order?" << endl;
+			typeOfInput = false;
 			break;
 		default:
 			cout << "To order an item just select an item by their number" << endl;
@@ -328,6 +331,12 @@ public:
 		cout << "}" << endl;
 
 		cout << "Basket Total = { $ " << total << " }" << endl;
+
+		if (choiceStr_ == "y" && done == true || choiceStr_ == "n" && done == true)
+		{
+			choiceStr_ = "";
+			typeOfInput = true;
+		}
 	}
 
 	void getInput(bool numberInput)
@@ -431,9 +440,10 @@ public:
 							Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
 							Accessory* emptyAccesory = new Accessory(item, "", 0);
 							basket.push_back(make_pair(item, emptyAccesory));
+							choice_ = 0;
 						}
 
-						//typeOfInput = true;
+						done = true;
 						break;
 					}
 				}
