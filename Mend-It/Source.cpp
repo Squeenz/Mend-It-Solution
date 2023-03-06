@@ -187,7 +187,7 @@ public:
 
 			display(whatToDisplay);
 
-			cout << "=================================" << endl;
+			cout << "===============[INPUT]==================" << endl;
 			if (typeOfInput == true)
 			{
 				cout << "Choose an option (1-" << amountOfOptions_ << "): ";
@@ -228,8 +228,6 @@ public:
 
 			selectedOption(whatToDisplay, choice_);
 
-			cout << "=================================" << endl;
-
 			system("CLS");
 		}
 
@@ -256,6 +254,8 @@ public:
 			{
 				cout << "      " << i + 1 << " :: " << options.at(i) << endl;
 			}
+
+			infoToShow = 0;
 		}
 		else if (whatToShow == "items")
 		{
@@ -281,11 +281,15 @@ public:
 			cout << "      " << amountOfOptions_ - 2 << " :: " << "Remove Item" << endl;
 			cout << "      " << amountOfOptions_ - 1 << " :: " << "Finish Order" << endl;
 			cout << "      " << amountOfOptions_ << " :: " << "Go Back" << endl;
+			cout << endl;
 
-			cout << "=================================" << endl;
+			cout << "==============[INFORMATION]===================" << endl;
 			information(infoToShow);
-			cout << "=================================" << endl;
+			cout << endl;
+
+			cout << "================[BASKET]=================" << endl;
 			shoppingBasket();
+			cout << endl;
  		}
 	}
 
@@ -308,11 +312,17 @@ public:
 			break;
 		case 4:
 			cout << "Choose which item you want to remove by the number" << endl;
+			typeOfInput = false;
+			break;
+		case 5:
+			cout << "Please confirm you want to proceed with this order" << endl;
+			cout << "You won't be able to change the order once it has proceeded" << endl;
 			typeOfInput = true;
 			break;
 		default:
-			cout << "To order an item just select an item by their number" << endl;
-			cout << "For example: 1 would add the item 1 to the basket" << endl;
+			cout << "To add an item to the basket, type the item's id" << endl;
+			cout << "For example if you type 1 then the item labeled as id 1" << endl;
+			cout << "Will be added to the basket." << endl;
 			typeOfInput = true;
 			break;
 		}
@@ -334,7 +344,7 @@ public:
 		}
 		else
 		{
-			cout << " 0 ";
+			cout << " Empty ";
 		}
 
 		cout << "}" << endl;
@@ -431,23 +441,35 @@ public:
 				{
 					if (choice == i)
 					{
-						infoToShow = 1;
-
 						if (choice - 1 < branchAccesories.size()) {
 							currentAccesory = this->branchAccesories[choice - 1][0];
 							currentAccesoryPrice = stod(this->branchAccesories[choice - 1][1]);
 						}
 
-						if (choiceStr_ == "y")
+						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
+
+						if (currentAccesory == "" && currentAccesoryPrice == 0)
 						{
-							Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
 							Accessory* addAccesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
 							basket.push_back(make_pair(item, addAccesory));
 							choice_ = 0;
 						}
+						else
+						{
+							infoToShow = 1;
+						}
+
+						if (choiceStr_ == "y")
+						{
+							Accessory* addAccesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
+							basket.push_back(make_pair(item, addAccesory));
+							currentAccesory = "";
+							currentAccesoryPrice = 0;
+							infoToShow = 0;
+							choice_ = 0;
+						}
 						else if (choiceStr_ == "n")
 						{
-							Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
 							Accessory* emptyAccesory = new Accessory(item, "", 0);
 							basket.push_back(make_pair(item, emptyAccesory));
 							choice_ = 0;
@@ -467,6 +489,7 @@ public:
 			if (choice == amountOfOptions_- 1)
 			{
 				//logic for finish order
+				infoToShow = 5;
 			}
 
 			//Go back to display the branch options when the last option is selected
