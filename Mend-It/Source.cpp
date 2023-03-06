@@ -503,12 +503,12 @@ public:
 				{
 					if (choice == i)
 					{
+						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
+
 						if (choice - 1 < branchAccesories.size()) {
 							currentAccesory = this->branchAccesories[choice - 1][0];
 							currentAccesoryPrice = stod(this->branchAccesories[choice - 1][1]);
 						}
-
-						Product* item = new Item(this->branchItems[choice - 1][0], stod(this->branchItems[choice - 1][1]));
 
 						if (currentAccesory == "" && currentAccesoryPrice == 0)
 						{
@@ -537,7 +537,6 @@ public:
 						}
 
 						done = true;
-						break;
 					}
 				}
 			}
@@ -570,8 +569,9 @@ public:
 					basket.clear();
 					typeOfInput = true;
 					showBasket= false;
+					choiceStr_ = "";
 				}
-				if (choiceStr_ == "n")
+				else if (choiceStr_ == "n")
 				{
 					infoToShow = 0;
 				}
