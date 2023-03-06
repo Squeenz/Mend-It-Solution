@@ -178,6 +178,7 @@ public:
 		{
 			cout << "CHOICE: " << choice_ << endl;
 			cout << "CHOICESTR: " << choiceStr_ << endl;
+			
 
 			//If the current branch is empty then display branches otherwise display the selected branch
 			currentBranch_ = (currentBranch_ == "") ? "Branches" : currentBranch_;
@@ -198,7 +199,6 @@ public:
 				cout << "Choose an option (y/n): ";
 			} 
 
-			
 			if (whatToDisplay == "branches")
 			{
 				getInput(typeOfInput);
@@ -214,14 +214,10 @@ public:
 			{
 				getInput(typeOfInput);
 			}
-			//else if (whatToDisplay == "remove item")
-			//{
-			//	getInput();
-			//}
-			//else if (whatToDisplay == "view basket")
-			//{
-			//	getInput();
-			//}
+			else if (whatToDisplay == "removeItem")
+			{
+				getInput(typeOfInput);
+			}
 			else if (whatToDisplay == "trackOrder")
 			{
 				getInput(typeOfInput);
@@ -260,6 +256,8 @@ public:
 		}
 		else if (whatToShow == "items")
 		{
+			cout << "     ---------ITEMS---------" << endl << endl;
+
 			selectedBranch = BranchFactory::createBranch(currentBranch_);
 
 			branchItems = selectedBranch->getStoreItems();
@@ -289,15 +287,46 @@ public:
  		}
 		else if (whatToShow == "trackOrder")
 		{
-			cout << "ORDER DETAILS			" << endl;
+			amountOfOptions_ = 1;
+			infoToShow = 0;
+
+			cout << "	ORDER DETAILS			" << endl;
 			cout << "=================================" << endl;
-			cout << "ORDER ID : {000000000}" << endl;
-			cout << "ORDER STATUS : {status}" << endl;
-			cout << "DELIVERY DATE : {11/02/2023}" << endl;
-			cout << "DELIVERY OPTION: {Delivery option} " << endl;
-			cout << "ORDER COST: {Total cost}" << endl;
+			cout << "ORDER ID : {000000000}" << endl << endl;
+			cout << "ORDER STATUS : {status}" << endl << endl;
+			cout << "DELIVERY DATE : {11/02/2023}" << endl << endl;
+			cout << "DELIVERY OPTION: {Delivery option} " << endl << endl;
+
+			cout << "ITEMS" << endl;
+			cout << "1 :: item a" << endl;
+			cout << "2 :: item b" << endl;
+			cout << endl;
+
+			cout << "ORDER COST: {Total cost}" << endl << endl;
 			cout << "=================================" << endl;
+			cout << "[**CONFIRMED**]------------------" << endl;
+			cout << "--[**PACKAGED**]-----------------" << endl;
+			cout << "---------------[**SENT**]--------" << endl;
+			cout << "------------------[**DELIVERED**]" << endl;
 			cout << "	1 :: Go back" << endl;
+			choiceStr_ = "";
+			itemAdded = false;
+			typeOfInput = true;
+			done = false;
+			basket.clear();
+		}
+		else if (whatToShow == "removeItem")
+		{
+			cout << "       ---------ITEMS---------" << endl << endl;
+			amountOfOptions_ = basket.size();
+			for (int i = 0; i < basket.size(); i++)
+			{
+				cout << "   " << i + 1 << " :: " << basket[i].second->description();
+				cout << endl;
+			}
+
+			cout << endl;
+			information(infoToShow);
 			cout << endl;
 		}
 	}
@@ -328,6 +357,10 @@ public:
 			cout << "Please confirm you want to proceed with this order" << endl;
 			cout << "You won't be able to change the order once it has proceeded" << endl;
 			typeOfInput = false;
+			break;
+		case 6:
+			cout << "Choose an item you want to remove from the basket" << endl;
+			typeOfInput = true;
 			break;
 		default:
 			cout << "To add an item to the basket, type the item's id" << endl;
@@ -501,13 +534,18 @@ public:
 			if (choice == amountOfOptions_ - 2)
 			{
 				//logic for removing an item from basket
+				whatToDisplay = "removeItem";
+				infoToShow = 6;
 			}
 			
 			if (choice == amountOfOptions_- 1)
 			{
 				//logic for finish order
 				infoToShow = 5;
-				whatToDisplay = "trackOrder";
+				if (choiceStr_ == "y")
+				{
+					whatToDisplay = "trackOrder";
+				}
 			}
 
 			//Go back to display the branch options when the last option is selected
@@ -532,13 +570,37 @@ public:
 				}
 			}
 		}
+		else if (whatIsDisplayed == "trackOrder")
+		{
+			if (choice == 1)
+			{
+				whatToDisplay = "items";
+			}
+		}
+		else if (whatIsDisplayed == "removeItem")
+		{
+			bool empty = false;
+
+			for (int i = 0; i < basket.size(); i++)
+			{
+				if (choice - 1 == i)
+				{
+					basket.erase(basket.begin() + i);
+					empty = true;
+				}
+			}
+
+			if (empty == true && basket.size() == 0)
+			{
+				whatToDisplay = "items";
+			}
+		}
 	}
 };
 
 int main()
 {
 	Interface* menu = new Interface;
-
 }
 
 /*
