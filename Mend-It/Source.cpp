@@ -7,6 +7,12 @@
 
 using namespace std;
 
+/*
+Add delivery options
+Sort out the ordering system
+	- Exporting to txt files / pdf
+*/
+
 class Branch
 {
 public:
@@ -165,8 +171,8 @@ private:
 	int choice_;
 	string choiceStr_;
 	int infoToShow;
-	bool itemAdded;
 	bool typeOfInput = true;
+	bool showBasket = false;
 	bool done = false;
 	bool end_ = false;
 public:
@@ -218,7 +224,7 @@ public:
 			{
 				getInput(typeOfInput);
 			}
-			else if (whatToDisplay == "trackOrder")
+			else if (whatToDisplay == "order")
 			{
 				getInput(typeOfInput);
 			}
@@ -282,10 +288,10 @@ public:
 			cout << "      " << amountOfOptions_ << " :: " << "Go Back" << endl;
 			cout << endl;
 			information(infoToShow);
-			shoppingBasket();
+			shoppingBasket(showBasket);
 			cout << endl;
  		}
-		else if (whatToShow == "trackOrder")
+		else if (whatToShow == "order")
 		{
 			amountOfOptions_ = 1;
 			infoToShow = 0;
@@ -310,7 +316,7 @@ public:
 			cout << "------------------[**DELIVERED**]" << endl;
 			cout << "	1 :: Go back" << endl;
 			choiceStr_ = "";
-			itemAdded = false;
+			showBasket= false;
 			typeOfInput = true;
 			done = false;
 			basket.clear();
@@ -318,12 +324,15 @@ public:
 		else if (whatToShow == "removeItem")
 		{
 			cout << "       ---------ITEMS---------" << endl << endl;
-			amountOfOptions_ = basket.size();
+			amountOfOptions_ = basket.size() + 1;
+
 			for (int i = 0; i < basket.size(); i++)
 			{
 				cout << "   " << i + 1 << " :: " << basket[i].second->description();
 				cout << endl;
 			}
+
+			cout << "   " << amountOfOptions_ << " :: Go Back" << endl;
 
 			cout << endl;
 			information(infoToShow);
@@ -371,9 +380,9 @@ public:
 		}
 	}
 
-	void shoppingBasket()
+	void shoppingBasket(bool show)
 	{
-		if (itemAdded == true)
+		if (show)
 		{
 			cout << endl;
 			cout << "================[BASKET]=================" << endl;
@@ -456,6 +465,14 @@ public:
 		}
 	}
 
+	void resetItemState()
+	{
+		currentAccesory = "";
+		currentAccesoryPrice = 0;
+		infoToShow = 0;
+		choice_ = 0;
+	}
+
 	//fix everything
 	void selectedOption(string whatIsDisplayed, int choice)
 	{
@@ -468,7 +485,7 @@ public:
 				whatToDisplay = (whatIsDisplayed == "branchOptions") ? "items" : "branches";
 				break;
 			case 2:
-				whatToDisplay = "track order";
+				whatToDisplay = "trackOrder";
 				break;
 			case 3:
 				whatToDisplay = "branches";
@@ -508,21 +525,15 @@ public:
 						{
 							Accessory* addAccesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
 							basket.push_back(make_pair(item, addAccesory));
-							currentAccesory = "";
-							currentAccesoryPrice = 0;
-							infoToShow = 0;
-							choice_ = 0;
-							itemAdded = true;
+							resetItemState();
+							showBasket = true;
 						}
 						else if (choiceStr_ == "n")
 						{
 							Accessory* emptyAccesory = new Accessory(item, "", 0);
 							basket.push_back(make_pair(item, emptyAccesory));
-							currentAccesory = "";
-							currentAccesoryPrice = 0;
-							infoToShow = 0;
-							choice_ = 0;
-							itemAdded = true;
+							resetItemState();
+							showBasket = true;
 						}
 
 						done = true;
@@ -544,7 +555,7 @@ public:
 				infoToShow = 5;
 				if (choiceStr_ == "y")
 				{
-					whatToDisplay = "trackOrder";
+					whatToDisplay = "order";
 				}
 			}
 
@@ -558,7 +569,7 @@ public:
 					whatToDisplay = "branchOptions";
 					basket.clear();
 					typeOfInput = true;
-					itemAdded = false;
+					showBasket= false;
 				}
 				if (choiceStr_ == "n")
 				{
@@ -570,7 +581,7 @@ public:
 				}
 			}
 		}
-		else if (whatIsDisplayed == "trackOrder")
+		else if (whatIsDisplayed == "order")
 		{
 			if (choice == 1)
 			{
@@ -590,7 +601,11 @@ public:
 				}
 			}
 
-			if (empty == true && basket.size() == 0)
+			if (choice == amountOfOptions_)
+			{
+				whatToDisplay = "items";
+			}
+			else if (empty == true && basket.size() == 0)
 			{
 				whatToDisplay = "items";
 			}
