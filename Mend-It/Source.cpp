@@ -165,6 +165,7 @@ private:
 	int choice_;
 	string choiceStr_;
 	int infoToShow;
+	bool itemAdded;
 	bool typeOfInput = true;
 	bool done = false;
 	bool end_ = false;
@@ -221,10 +222,10 @@ public:
 			//{
 			//	getInput();
 			//}
-			//else if (whatToDisplay == "track order")
-			//{
-			//	getInput();
-			//}
+			else if (whatToDisplay == "trackOrder")
+			{
+				getInput(typeOfInput);
+			}
 
 			selectedOption(whatToDisplay, choice_);
 
@@ -246,7 +247,7 @@ public:
 		}
 		else if (whatToShow == "branchOptions")
 		{
-			vector<string>options = { "Order Items", "View Basket", "Order Tracking", "Go Back"};
+			vector<string>options = { "Order Items", "Order Tracking", "Go Back"};
 
 			amountOfOptions_ = options.size();
 
@@ -282,19 +283,28 @@ public:
 			cout << "      " << amountOfOptions_ - 1 << " :: " << "Finish Order" << endl;
 			cout << "      " << amountOfOptions_ << " :: " << "Go Back" << endl;
 			cout << endl;
-
-			cout << "==============[INFORMATION]===================" << endl;
 			information(infoToShow);
-			cout << endl;
-
-			cout << "================[BASKET]=================" << endl;
 			shoppingBasket();
 			cout << endl;
  		}
+		else if (whatToShow == "trackOrder")
+		{
+			cout << "ORDER DETAILS			" << endl;
+			cout << "=================================" << endl;
+			cout << "ORDER ID : {000000000}" << endl;
+			cout << "ORDER STATUS : {status}" << endl;
+			cout << "DELIVERY DATE : {11/02/2023}" << endl;
+			cout << "DELIVERY OPTION: {Delivery option} " << endl;
+			cout << "ORDER COST: {Total cost}" << endl;
+			cout << "=================================" << endl;
+			cout << "	1 :: Go back" << endl;
+			cout << endl;
+		}
 	}
 
 	void information(int infoToShow)
 	{
+		cout << "==============[INFORMATION]===================" << endl;
 		switch (infoToShow)
 		{
 		case 1:
@@ -317,7 +327,7 @@ public:
 		case 5:
 			cout << "Please confirm you want to proceed with this order" << endl;
 			cout << "You won't be able to change the order once it has proceeded" << endl;
-			typeOfInput = true;
+			typeOfInput = false;
 			break;
 		default:
 			cout << "To add an item to the basket, type the item's id" << endl;
@@ -330,31 +340,36 @@ public:
 
 	void shoppingBasket()
 	{
-		cout << "Basket = {";
-
-		double total = 0;
-		if (basket.size() != 0)
+		if (itemAdded == true)
 		{
-			for (int i = 0; i < basket.size(); i++)
+			cout << endl;
+			cout << "================[BASKET]=================" << endl;
+			cout << "Basket = {";
+
+			double total = 0;
+			if (basket.size() != 0)
 			{
-				cout << " " << basket[i].second->description() << " ";
+				for (int i = 0; i < basket.size(); i++)
+				{
+					cout << " " << basket[i].second->description() << " ";
 
-				total = total + basket[i].second->price();
+					total = total + basket[i].second->price();
+				}
 			}
-		}
-		else
-		{
-			cout << " Empty ";
-		}
+			else
+			{
+				cout << " Empty ";
+			}
 
-		cout << "}" << endl;
+			cout << "}" << endl;
 
-		cout << "Basket Total = { $ " << total << " }" << endl;
+			cout << "Basket Total = { $ " << total << " }" << endl;
 
-		if (choiceStr_ == "y" && done == true || choiceStr_ == "n" && done == true)
-		{
-			choiceStr_ = "";
-			typeOfInput = true;
+			if (choiceStr_ == "y" && done == true || choiceStr_ == "n" && done == true)
+			{
+				choiceStr_ = "";
+				typeOfInput = true;
+			}
 		}
 	}
 
@@ -420,12 +435,9 @@ public:
 				whatToDisplay = (whatIsDisplayed == "branchOptions") ? "items" : "branches";
 				break;
 			case 2:
-				whatToDisplay = "view basket";
-				break;
-			case 3:
 				whatToDisplay = "track order";
 				break;
-			case 4:
+			case 3:
 				whatToDisplay = "branches";
 				currentBranch_ = "";
 				break;
@@ -467,12 +479,17 @@ public:
 							currentAccesoryPrice = 0;
 							infoToShow = 0;
 							choice_ = 0;
+							itemAdded = true;
 						}
 						else if (choiceStr_ == "n")
 						{
 							Accessory* emptyAccesory = new Accessory(item, "", 0);
 							basket.push_back(make_pair(item, emptyAccesory));
+							currentAccesory = "";
+							currentAccesoryPrice = 0;
+							infoToShow = 0;
 							choice_ = 0;
+							itemAdded = true;
 						}
 
 						done = true;
@@ -490,6 +507,7 @@ public:
 			{
 				//logic for finish order
 				infoToShow = 5;
+				whatToDisplay = "trackOrder";
 			}
 
 			//Go back to display the branch options when the last option is selected
@@ -502,6 +520,7 @@ public:
 					whatToDisplay = "branchOptions";
 					basket.clear();
 					typeOfInput = true;
+					itemAdded = false;
 				}
 				if (choiceStr_ == "n")
 				{
