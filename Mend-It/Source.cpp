@@ -138,28 +138,71 @@ public:
 	double price() override { return product_->price() + price_; }
 };
 
-//Work in progress 
-//Going to work on the interface for now then comeback to this.
-class Observer
+//set up the observer pattern
+class Order
 {
+private:
+	string orderID_;
+	string orderDate_;
+	string orderStatus_;
+	vector<pair<Product*, Accessory*>> items_;
+	//double price_;
 public:
-	virtual void update() = 0;
+	Order(string orderID, string orderDate, string orderStatus, vector<pair<Product*, Accessory*>> items) : orderID_(orderID), orderDate_(orderDate), orderStatus_(orderStatus), items_(items) {};
+	string getOrderID(){return orderID_;}
+	string getOrderDate() { return orderDate_; }
+	string getOrderStatus() { return orderStatus_; }
+	vector<pair<Product*, Accessory*>> getItems() { return items_; }
 };
 
-class Subject
-{
+class Observer {
 public:
-	virtual void registerObserver() = 0;
-	virtual void unregisterObserver() = 0;
-	virtual void notifyObserver() = 0;
+	virtual void update(const vector<Order>& orders) = 0;
+};
+
+class Subject {
+public:
+	void Attach(Observer* observer) {
+		observers_.push_back(observer);
+	}
+
+	void Detach(Observer* observer) {
+		observers_.erase(remove(observers_.begin(), observers_.end(), observer), observers_.end());
+	}
+
+	void Notify(const vector<Order>& orders) {
+		for (auto observer : observers_) {
+			observer->update(orders);
+		}
+	}
+
+private:
+	vector<Observer*> observers_;
+};
+
+
+class OrderTracker : public Observer {
+public:
+	OrderTracker(const string& name) : name_(name) {}
+
+	void update(const vector<Order>& orders) override {
+		cout << "Order tracker " << name_ << " received an update:" << endl;
+		for (auto order : orders) {
+			cout << " - " << order.getOrderID() << " DATE : " << order.getOrderDate() << order.getOrderStatus() << endl;
+		}
+	}
+
+private:
+	string name_;
 };
 
 //re-code all of the shit code.
 class Interface
 {
 private:
-	vector<string> branches = { "Treforest", "Pontypridd", "Cardiff" };
+	const vector<string> branches = { "Treforest", "Pontypridd", "Cardiff" };
 	vector<pair<Product*, Accessory*>> basket;
+	vector<Order> orders;
 	string whatToDisplay;
 	string currentBranch_;
 	Branch* selectedBranch;
@@ -212,6 +255,10 @@ public:
 				choice_ = 0;
 				whatToDisplay = "branchOptions";
 			}
+			else if (whatToDisplay == "orderTracking")
+			{
+				getInput(typeOfInput);
+			}
 			else if (whatToDisplay == "branchOptions")
 			{
 				getInput(typeOfInput);
@@ -246,6 +293,16 @@ public:
 			{
 				cout << "      " << i + 1 << " :: " << branches.at(i) << endl;
 			}
+		}
+		else if (whatToShow == "orderTracking")
+		{
+			OrderTracker tracker("Order Tracker");
+			Subject orderSubject;
+			orderSubject.Attach(&tracker);
+			orderSubject.Notify(orders);
+			amountOfOptions_ = 1;
+			cout << "1 :: Go back" << endl;
+			infoToShow = 0;
 		}
 		else if (whatToShow == "branchOptions")
 		{
@@ -485,12 +542,22 @@ public:
 				whatToDisplay = (whatIsDisplayed == "branchOptions") ? "items" : "branches";
 				break;
 			case 2:
-				whatToDisplay = "trackOrder";
+				whatToDisplay = "orderTracking";
 				break;
 			case 3:
 				whatToDisplay = "branches";
 				currentBranch_ = "";
 				break;
+			}
+		}
+		else if (whatIsDisplayed == "orderTracking")
+		{
+			amountOfOptions_ = 1;
+
+			//user input logic behind tracking
+			if (choice == amountOfOptions_)
+			{
+				whatToDisplay = "branches";
 			}
 		}
 		else if (whatIsDisplayed == "items")
@@ -554,6 +621,9 @@ public:
 				infoToShow = 5;
 				if (choiceStr_ == "y")
 				{
+					//orders.push_back(basket);
+					Order* order = new Order("ID", "07/03/2020", "DELIVERED", basket);
+					orders.push_back(*order);
 					whatToDisplay = "order";
 				}
 			}
