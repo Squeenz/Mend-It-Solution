@@ -1,9 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <time.h>
+#include <chrono>
+#include <ctime>
 #include <stdlib.h>
+#include <iomanip>
 #include <limits>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -146,11 +149,51 @@ private:
 	string orderDate_;
 	string orderStatus_;
 	vector<pair<Product*, Accessory*>> items_;
-	//double price_;
+	string generateID(const int len)
+	{
+		static const char alphaNum[] =
+			"0123456780"
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz";
+
+		string tmp;
+		tmp.reserve(len);
+
+		for (int i = 0; i < len; i++)
+		{
+			tmp += alphaNum[rand() % (sizeof(alphaNum))];
+		}
+
+		return tmp;
+	}
 public:
-	Order(string orderID, string orderDate, string orderStatus, vector<pair<Product*, Accessory*>> items) : orderID_(orderID), orderDate_(orderDate), orderStatus_(orderStatus), items_(items) {};
-	string getOrderID(){return orderID_;}
-	string getOrderDate() { return orderDate_; }
+	Order(string orderStatus, vector<pair<Product*, Accessory*>> items) : orderStatus_(orderStatus), items_(items) {};
+	string setOrderID()
+	{
+		return orderID_ = generateID(10);
+	}
+	string getOrderID()
+	{
+		return orderID_;
+	}
+	string getOrderDate()
+	{
+		time_t now = std::time(nullptr); // Get current system time
+		tm tm = {}; // Initialize tm structure
+
+		// Convert system time to local time and store in tm structure
+		localtime_s(&tm, &now);
+
+		ostringstream osDate;
+
+		// Output formatted time string
+		osDate << put_time(&tm, "%d-%m-%Y");
+		
+		orderDate_ = osDate.str();
+
+		return orderDate_;
+	}
+
 	string getOrderStatus() { return orderStatus_; }
 	vector<pair<Product*, Accessory*>> getItems() { return items_; }
 };
@@ -188,7 +231,11 @@ public:
 	void update(const vector<Order>& orders) override {
 		cout << "Order tracker " << name_ << " received an update:" << endl;
 		for (auto order : orders) {
-			cout << " - " << order.getOrderID() << " DATE : " << order.getOrderDate() << order.getOrderStatus() << endl;
+			cout << "ORDER ID: " << order.getOrderID() << endl;
+			cout << "================================" << endl;
+			cout << " DATE : " << order.getOrderDate() << endl;
+			cout << " NUMBER OF ITEMS : " << endl;
+			cout << " STATUS : " << order.getOrderStatus() << endl;
 		}
 	}
 
@@ -221,6 +268,7 @@ private:
 public:
 	Interface()
 	{
+		srand((unsigned)time(NULL) * 0);
 		whatToDisplay = "branches";
 
 		while (end_ != true)
@@ -353,24 +401,35 @@ public:
 			amountOfOptions_ = 1;
 			infoToShow = 0;
 
+			Order* order = new Order("DELIVERED", basket);
+			order->setOrderID();
+			orders.push_back(*order);
+
 			cout << "	ORDER DETAILS			" << endl;
 			cout << "=================================" << endl;
-			cout << "ORDER ID : {000000000}" << endl << endl;
+			cout << "ORDER ID : " << order->getOrderID() << endl << endl;
 			cout << "ORDER STATUS : {status}" << endl << endl;
-			cout << "DELIVERY DATE : {11/02/2023}" << endl << endl;
+			cout << "DELIVERY DATE : " << order->getOrderDate() << endl << endl;
 			cout << "DELIVERY OPTION: {Delivery option} " << endl << endl;
 
 			cout << "ITEMS" << endl;
-			cout << "1 :: item a" << endl;
-			cout << "2 :: item b" << endl;
+			
+			int num = 1;
+			double total = 0;
+			for (auto& it : basket )
+			{
+				cout << num << " " << it.first->description() << it.second->description() << endl;
+				total = total + it.first->price() + it.second->price();
+				num++;
+			}
 			cout << endl;
 
-			cout << "ORDER COST: {Total cost}" << endl << endl;
+			cout << "ORDER COST: $" << total << endl << endl;
 			cout << "=================================" << endl;
 			cout << "[**CONFIRMED**]------------------" << endl;
 			cout << "--[**PACKAGED**]-----------------" << endl;
 			cout << "---------------[**SENT**]--------" << endl;
-			cout << "------------------[**DELIVERED**]" << endl;
+			cout << "------------------[**DELIVERED**]" << endl << endl;
 			cout << "	1 :: Go back" << endl;
 			choiceStr_ = "";
 			showBasket= false;
@@ -622,8 +681,6 @@ public:
 				if (choiceStr_ == "y")
 				{
 					//orders.push_back(basket);
-					Order* order = new Order("ID", "07/03/2020", "DELIVERED", basket);
-					orders.push_back(*order);
 					whatToDisplay = "order";
 				}
 			}
