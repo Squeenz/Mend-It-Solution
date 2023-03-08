@@ -405,32 +405,40 @@ public:
 			order->setOrderID();
 			orders.push_back(*order);
 
+			cout << "=================================" << endl;
 			cout << "	ORDER DETAILS			" << endl;
 			cout << "=================================" << endl;
 			cout << "ORDER ID : " << order->getOrderID() << endl << endl;
-			cout << "ORDER STATUS : {status}" << endl << endl;
+			cout << "ORDER TYPE : {ONLINE/INSTORE}" << endl << endl;
+			cout << "BRANCH:  : " << order->getOrderID() << endl << endl;
 			cout << "DELIVERY DATE : " << order->getOrderDate() << endl << endl;
 			cout << "DELIVERY OPTION: {Delivery option} " << endl << endl;
 
-			cout << "ITEMS" << endl;
-			
-			int num = 1;
+			cout << "ITEM - ACCESORY" << endl;
+
 			double total = 0;
-			for (auto& it : basket )
+			if (basket.size() != 0)
 			{
-				cout << num << " " << it.first->description() << it.second->description() << endl;
-				total = total + it.first->price() + it.second->price();
-				num++;
+				for (int i = 0; i < basket.size(); i++)
+				{
+					cout << " " << basket[i].second->description() << endl;
+
+					total = total + basket[i].second->price();
+				}
 			}
+
 			cout << endl;
 
 			cout << "ORDER COST: $" << total << endl << endl;
 			cout << "=================================" << endl;
-			cout << "[**CONFIRMED**]------------------" << endl;
-			cout << "--[**PACKAGED**]-----------------" << endl;
-			cout << "---------------[**SENT**]--------" << endl;
-			cout << "------------------[**DELIVERED**]" << endl << endl;
+			cout << "	ORDER TRACKING			" << endl;
+			cout << "=================================" << endl;
+			
+
+
+
 			cout << "	1 :: Go back" << endl;
+
 			choiceStr_ = "";
 			showBasket= false;
 			typeOfInput = true;
