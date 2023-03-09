@@ -1,6 +1,8 @@
 ﻿  Source.cpp
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(403,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(445,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(463,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(504,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(506,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(548,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(566,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(615,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(328): warning C4715: 'Pontypridd::pushOrder': not all control paths return a value
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Mend-It\Source.cpp(373): warning C4715: 'Cardiff::pushOrder': not all control paths return a value
   Mend-It.vcxproj -> C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\x64\Debug\Mend-It.exe

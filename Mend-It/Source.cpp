@@ -16,75 +16,7 @@ Add delivery options
 Sort out the ordering system
 	- Exporting to txt files / pdf
 */
-
-class Branch
-{
-public:
-	virtual string getName() const = 0;
-	virtual vector<vector<string>> getStoreItems() const = 0;
-	virtual vector<vector<string>> getStoreAccesories() const = 0;
-	virtual ~Branch() {};
-};
-
-class Treforest : public Branch
-{
-private:
-	vector<vector<string>> const branchItems = { { "hammer", "100" }, { "screwdriver", "50" }, { "wrench", "30" }, { "nail", "1" } };
-	vector<vector<string>> const branchAccesories = { {"gloves", "5"}, {"safety glasses", "10"}, {"mask", "15"} };
-public:
-	string getName() const override { return "Treforest"; }
-	vector<vector<string>> getStoreItems() const override { return branchItems; }
-	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
-	~Treforest() {};
-};
-
-class Pontypridd : public Branch
-{
-private:
-	vector<vector<string>> const branchItems = { {"drill", "100"}, {"saw", "50"}, {"pliers", "30"}, {"bolt", "1"} };
-	vector<vector<string>> const branchAccesories = { {"tape measure", "5"}, {"level", "10"}, {"utility knife", "15"}};
-public:
-	string getName() const override { return "Pontypridd"; };
-	vector<vector<string>> getStoreItems() const override { return branchItems; }
-	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
-	~Pontypridd() {};
-};
-
-class Cardiff : public Branch
-{
-private:
-	vector<vector<string>> const  branchItems = { {"paint", "100"}, {"brush", "50"}, {"roller", "30"}, {"putty knife", "1"}};
-	vector<vector<string>> const  branchAccesories = { {"sandpaper", "5"}, {"drop cloth", "10"}, {"painter's tape", "15"} };
-public:
-	string getName() const override { return "Cardiff"; }
-	vector<vector<string>> getStoreItems() const override { return branchItems; }
-	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
-	~Cardiff() {};
-};
-
-class BranchFactory
-{
-public:
-	static Branch* createBranch(const string& branchName)
-	{
-		if (branchName == "Treforest")
-		{
-			return new Treforest();
-		}
-		else if (branchName == "Pontypridd")
-		{
-			return new Pontypridd();
-		}
-		else if (branchName == "Cardiff")
-		{
-			return new Cardiff();
-		}
-		else
-		{
-			return nullptr;
-		}
-	}
-};
+//set up the observer pattern
 
 class Product
 {
@@ -142,7 +74,6 @@ public:
 	double price() override { return product_->price() + price_; }
 };
 
-//set up the observer pattern
 class Order
 {
 private:
@@ -225,7 +156,7 @@ public:
 
 		setStatus(currentState);
 
-		
+
 	}
 	string getBranch()
 	{
@@ -251,7 +182,7 @@ public:
 
 		// Output formatted time string
 		osDate << put_time(&tm, "%d-%m-%Y");
-		
+
 		date_ = osDate.str();
 
 		return date_;
@@ -260,7 +191,7 @@ public:
 	{
 		return status_ = state;
 	}
-	string getStatus() 
+	string getStatus()
 	{
 		return status_;
 	}
@@ -309,6 +240,178 @@ public:
 
 private:
 	string name_;
+};
+
+class Branch
+{
+public:
+	virtual string getName() const = 0;
+	virtual vector<vector<string>> getStoreItems() const = 0;
+	virtual vector<vector<string>> getStoreAccesories() const = 0;
+	virtual vector<Order*> pushOrder(Order* order, string type) = 0;
+	virtual vector<Order*> getOrder(string type) const = 0;
+	virtual ~Branch() {};
+};
+
+class Treforest : public Branch
+{
+private:
+	vector<vector<string>> const branchItems = { { "hammer", "100" }, { "screwdriver", "50" }, { "wrench", "30" }, { "nail", "1" } };
+	vector<vector<string>> const branchAccesories = { {"gloves", "5"}, {"safety glasses", "10"}, {"mask", "15"} };
+	vector<Order*> onlineOrders;
+	vector<Order*> instoreOrders;
+public:
+	string getName() const override { return "Treforest"; }
+	vector<vector<string>> getStoreItems() const override { return branchItems; }
+	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
+	vector<Order*> pushOrder(Order* order, string type) override
+	{
+		if(type == "Online")
+		{
+			onlineOrders.push_back(order);
+		}
+		else if (type == "Instore")
+		{
+			instoreOrders.push_back(order);
+		}
+		else
+		{
+			throw "Wrong type of push vector, use: (Online/Instore)";
+		}
+
+		return type == "Online" ? onlineOrders : instoreOrders;
+	};
+	vector<Order*> getOrder(string type) const override
+	{
+		if (type == "Online")
+		{
+			return onlineOrders;
+		}
+		else if (type == "Instore")
+		{
+			return instoreOrders;
+		}
+		else
+		{
+			throw "Wrong type of push vector, use: (Online/Instore)";
+		}
+
+	}
+	~Treforest() {}
+};
+
+class Pontypridd : public Branch
+{
+private:
+	vector<vector<string>> const branchItems = { {"drill", "100"}, {"saw", "50"}, {"pliers", "30"}, {"bolt", "1"} };
+	vector<vector<string>> const branchAccesories = { {"tape measure", "5"}, {"level", "10"}, {"utility knife", "15"}};
+	vector<Order*> onlineOrders;
+	vector<Order*> instoreOrders;
+public:
+	string getName() const override { return "Pontypridd"; };
+	vector<vector<string>> getStoreItems() const override { return branchItems; }
+	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
+	vector<Order*> pushOrder(Order* order, string type) override
+	{
+		if (type == "Online")
+		{
+			onlineOrders.push_back(order);
+		}
+		else if (type == "Instore")
+		{
+			instoreOrders.push_back(order);
+		}
+		else
+		{
+			throw "Wrong type of push vector, use: (Online/Instore)";
+		}
+	};
+	vector<Order*> getOrder(string type) const override
+	{
+		if (type == "Online")
+		{
+			return onlineOrders;
+		}
+		else if (type == "Instore")
+		{
+			return instoreOrders;
+		}
+		else
+		{
+			throw "Wrong type of push vector, use: (Online/Instore)";
+		}
+
+	}
+	~Pontypridd() {};
+};
+
+class Cardiff : public Branch
+{
+private:
+	vector<vector<string>> const  branchItems = { {"paint", "100"}, {"brush", "50"}, {"roller", "30"}, {"putty knife", "1"}};
+	vector<vector<string>> const  branchAccesories = { {"sandpaper", "5"}, {"drop cloth", "10"}, {"painter's tape", "15"} };
+	vector<Order*> onlineOrders;
+	vector<Order*> instoreOrders;
+public:
+	string getName() const override { return "Cardiff"; }
+	vector<vector<string>> getStoreItems() const override { return branchItems; }
+	vector<vector<string>> getStoreAccesories() const override { return branchAccesories; }
+	vector<Order*> pushOrder(Order* order, string type) override
+	{
+		if (type == "Online")
+		{
+			onlineOrders.push_back(order);
+		}
+		else if (type == "Instore")
+		{
+			instoreOrders.push_back(order);
+		}
+		else
+		{
+			throw "Wrong type of push vector, use: (Online/Instore)";
+		}
+	};
+	vector<Order*> getOrder(string type) const override
+	{
+		if (type == "Online")
+		{
+			return onlineOrders;
+		}
+		else if (type == "Instore")
+		{
+			return instoreOrders;
+		}
+		else
+		{
+			throw "Wrong type of push vector, use: (Online/Instore)";
+		}
+
+	}
+	~Cardiff() {};
+};
+
+class BranchFactory
+{
+public:
+	static Branch* createBranch(const string& branchName)
+	{
+		if (branchName == "Treforest")
+		{
+			return new Treforest();
+		}
+		else if (branchName == "Pontypridd")
+		{
+			return new Pontypridd();
+		}
+		else if (branchName == "Cardiff")
+		{
+			return new Cardiff();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 };
 
 //re-code all of the shit code.
@@ -488,8 +591,16 @@ public:
 			infoToShow = 0;
 
 			Order* onlineOrder = new Order(currentBranch_, "Online", basket);
-			onlineOrders.push_back(*onlineOrder);
+			//onlineOrders.push_back(*onlineOrder);
 
+			selectedBranch->pushOrder(onlineOrder, "Online");
+			
+			//TEST
+			for (int i = 0; i < selectedBranch->getOrder("Online").size(); i++)
+			{
+				cout << selectedBranch->getOrder("Online").at(i)->getID();
+			}
+			
 			cout << "	1 :: Go back" << endl;
 
 			choiceStr_ = "";
