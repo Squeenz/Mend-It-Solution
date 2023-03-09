@@ -7,6 +7,7 @@
 #include <limits>
 #include <string>
 #include <sstream>
+#include <thread>
 
 using namespace std;
 
@@ -145,9 +146,11 @@ public:
 class Order
 {
 private:
-	string orderID_;
-	string orderDate_;
-	string orderStatus_;
+	string id_;
+	string date_;
+	string status_;
+	string type_;
+	string branch_;
 	vector<pair<Product*, Accessory*>> items_;
 	string generateID(const int len)
 	{
@@ -166,17 +169,77 @@ private:
 
 		return tmp;
 	}
+	string createStatus()
+	{
+		vector<string> state = { "PROCESSING", "CONFIRMED", "SENT", "DELIVERED" };
+		string currentState = "";
+
+		for (int i = 0; i < state.size(); i++)
+		{
+			currentState = state[i];
+			this_thread::sleep_for(chrono::seconds(1));
+		}
+
+		return currentState;
+	}
 public:
-	Order(string orderStatus, vector<pair<Product*, Accessory*>> items) : orderStatus_(orderStatus), items_(items) {};
-	string setOrderID()
+	Order(string branch, string type, vector<pair<Product*, Accessory*>> items) : branch_(branch), type_(type), items_(items)
 	{
-		return orderID_ = generateID(10);
+		vector<string> state = { "Processing", "Confirmed", "Sent", "Delivered" };
+		string currentState = "";
+
+		setID();
+		getDate();
+
+		for (int i = 0; i < state.size(); i++)
+		{
+			system("CLS");
+			currentState = state[i];
+			cout << "=================================" << endl;
+			cout << "	ORDER DETAILS WITH TRACKING	 " << endl;
+			cout << "=================================" << endl;
+			cout << "ORDER ID : " << id_ << endl << endl;
+			cout << "CURRENT ORDER STATUS : " << currentState << endl << endl;
+			cout << "ORDER TYPE : " << type_ << endl << endl;
+			cout << "BRANCH:  : " << branch_ << endl << endl;
+			cout << "DELIVERY DATE : " << date_ << endl << endl;
+			cout << "DELIVERY OPTION: {Delivery option} " << endl << endl;
+			cout << "=================================" << endl;
+			cout << "ITEM - ACCESORY" << endl;
+
+			double total = 0;
+			if (items.size() != 0)
+			{
+				for (int i = 0; i < items.size(); i++)
+				{
+					cout << " " << items[i].second->description() << endl;
+
+					total = total + items[i].second->price();
+				}
+			}
+			cout << endl;
+
+			cout << "ORDER COST: $" << total << endl << endl;
+			this_thread::sleep_for(chrono::seconds(3));
+		}
+
+		setStatus(currentState);
+
+		
 	}
-	string getOrderID()
+	string getBranch()
 	{
-		return orderID_;
+		return branch_;
 	}
-	string getOrderDate()
+	string setID()
+	{
+		return id_ = generateID(10);
+	}
+	string getID()
+	{
+		return id_;
+	}
+	string getDate()
 	{
 		time_t now = std::time(nullptr); // Get current system time
 		tm tm = {}; // Initialize tm structure
@@ -189,13 +252,22 @@ public:
 		// Output formatted time string
 		osDate << put_time(&tm, "%d-%m-%Y");
 		
-		orderDate_ = osDate.str();
+		date_ = osDate.str();
 
-		return orderDate_;
+		return date_;
 	}
-
-	string getOrderStatus() { return orderStatus_; }
-	vector<pair<Product*, Accessory*>> getItems() { return items_; }
+	string setStatus(string state)
+	{
+		return status_ = state;
+	}
+	string getStatus() 
+	{
+		return status_;
+	}
+	vector<pair<Product*, Accessory*>> getItems()
+	{
+		return items_;
+	}
 };
 
 class Observer {
@@ -223,19 +295,15 @@ private:
 	vector<Observer*> observers_;
 };
 
-
 class OrderTracker : public Observer {
 public:
 	OrderTracker(const string& name) : name_(name) {}
 
 	void update(const vector<Order>& orders) override {
-		cout << "Order tracker " << name_ << " received an update:" << endl;
+		cout << name_ << " order tracker received an update" << endl;
+		cout << "============================================================" << endl;
 		for (auto order : orders) {
-			cout << "ORDER ID: " << order.getOrderID() << endl;
-			cout << "================================" << endl;
-			cout << " DATE : " << order.getOrderDate() << endl;
-			cout << " NUMBER OF ITEMS : " << endl;
-			cout << " STATUS : " << order.getOrderStatus() << endl;
+			cout << "[ ORDER ID: " << order.getID() << ", DATE: " << order.getDate() << ", STATUS: " << order.getStatus() << ", BRANCH: " << order.getBranch() << " ]" << endl;
 		}
 	}
 
@@ -249,7 +317,8 @@ class Interface
 private:
 	const vector<string> branches = { "Treforest", "Pontypridd", "Cardiff" };
 	vector<pair<Product*, Accessory*>> basket;
-	vector<Order> orders;
+	vector<Order> onlineOrders;
+	vector<Order> instoreOrders;
 	string whatToDisplay;
 	string currentBranch_;
 	Branch* selectedBranch;
@@ -273,10 +342,6 @@ public:
 
 		while (end_ != true)
 		{
-			cout << "CHOICE: " << choice_ << endl;
-			cout << "CHOICESTR: " << choiceStr_ << endl;
-			
-
 			//If the current branch is empty then display branches otherwise display the selected branch
 			currentBranch_ = (currentBranch_ == "") ? "Branches" : currentBranch_;
 
@@ -344,13 +409,34 @@ public:
 		}
 		else if (whatToShow == "orderTracking")
 		{
-			OrderTracker tracker("Order Tracker");
-			Subject orderSubject;
-			orderSubject.Attach(&tracker);
-			orderSubject.Notify(orders);
 			amountOfOptions_ = 1;
+
+			for (int i = 0; i < branches.size(); i++)
+			{
+				if (currentBranch_ == branches[i])
+				{
+					OrderTracker tracker1(currentBranch_ + " Online");
+					Subject onlineOrderSub;
+					onlineOrderSub.Attach(&tracker1);
+					onlineOrderSub.Notify(onlineOrders);
+				}
+			}
+
+			/*
+			OrderTracker tracker1("Online");
+			Subject onlineOrderSub;
+			onlineOrderSub.Attach(&tracker1);
+			onlineOrderSub.Notify(onlineOrders);
+
+			cout << endl;
+
+			OrderTracker tracker2("Instore");
+			Subject instoreOrderSub;
+			instoreOrderSub.Attach(&tracker2);
+			instoreOrderSub.Notify(instoreOrders);
+			*/
+
 			cout << "1 :: Go back" << endl;
-			infoToShow = 0;
 		}
 		else if (whatToShow == "branchOptions")
 		{
@@ -401,41 +487,8 @@ public:
 			amountOfOptions_ = 1;
 			infoToShow = 0;
 
-			Order* order = new Order("DELIVERED", basket);
-			order->setOrderID();
-			orders.push_back(*order);
-
-			cout << "=================================" << endl;
-			cout << "	ORDER DETAILS			" << endl;
-			cout << "=================================" << endl;
-			cout << "ORDER ID : " << order->getOrderID() << endl << endl;
-			cout << "ORDER TYPE : {ONLINE/INSTORE}" << endl << endl;
-			cout << "BRANCH:  : " << order->getOrderID() << endl << endl;
-			cout << "DELIVERY DATE : " << order->getOrderDate() << endl << endl;
-			cout << "DELIVERY OPTION: {Delivery option} " << endl << endl;
-
-			cout << "ITEM - ACCESORY" << endl;
-
-			double total = 0;
-			if (basket.size() != 0)
-			{
-				for (int i = 0; i < basket.size(); i++)
-				{
-					cout << " " << basket[i].second->description() << endl;
-
-					total = total + basket[i].second->price();
-				}
-			}
-
-			cout << endl;
-
-			cout << "ORDER COST: $" << total << endl << endl;
-			cout << "=================================" << endl;
-			cout << "	ORDER TRACKING			" << endl;
-			cout << "=================================" << endl;
-			
-
-
+			Order* onlineOrder = new Order(currentBranch_, "Online", basket);
+			onlineOrders.push_back(*onlineOrder);
 
 			cout << "	1 :: Go back" << endl;
 
