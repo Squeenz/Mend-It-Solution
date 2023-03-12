@@ -1,0 +1,5 @@
+﻿  Singleton.cpp
+C:\Users\YOGI\Documents\GitHub\New-Mend-It-Solution\Mend-It-Solution\Singleton.cpp(263,42): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\YOGI\Documents\GitHub\New-Mend-It-Solution\Mend-It-Solution\Singleton.cpp(275,38): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\YOGI\Documents\GitHub\New-Mend-It-Solution\Mend-It-Solution\Singleton.cpp(289,46): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Mend-It-Solution.vcxproj -> C:\Users\YOGI\Documents\GitHub\New-Mend-It-Solution\Mend-It-Solution\x64\Debug\Mend-It-Solution.exe
