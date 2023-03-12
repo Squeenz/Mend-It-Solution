@@ -38,6 +38,7 @@ public:
 	void addItemToBasket(Product* product, Accessory* accessory);
 	vector<pair<Product*, Accessory*>> getItems();
 	void removeItemFromBasket();
+	void clear();
 	void orderBasketItems();
 };
 

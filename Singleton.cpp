@@ -1,5 +1,9 @@
 #include "Singleton.h"
 
+//Takes user input and check is the inpud is valid, depending on the bool isInputNumber
+//It will run a different validation check. If isInputNumber true then it will check if the int input is
+//valid in this case it will check if it's not over or under the numOfOptions.
+//If isInputNumber is false then it will check if the string is y or n.
 void InterfaceCore::getInputAndCheck(bool isInputNumber)
 {
 	cout << "===============[INPUT]==================" << endl;
@@ -50,37 +54,44 @@ void InterfaceCore::getInputAndCheck(bool isInputNumber)
 	}
 }
 
+//Sets the numOfOptions to the paramater value
 void InterfaceCore::setNumOfOptions(int numOfOptions)
 {
 	this->numOfOptions_ = numOfOptions;
 }
 
+//Resets the choice values to default which is 0 for int and "" for the string choice
 void InterfaceCore::resetChoices()
 {
 	this->numChoice_ = 0;
 	this->txtChoice_ = "";
 }
 
+//Returns the number of options
 int InterfaceCore::getNumOfOptions()
 {
 	return numOfOptions_;
 }
 
+//Returns the number choice
 int InterfaceCore::getNumChoice()
 {
 	return numChoice_;
 }
 
+//Returns string choice
 string InterfaceCore::getTxtChoice()
 {
 	return txtChoice_;
 }
 
+//Returns the end bool
 bool InterfaceCore::getEnd()
 {
 	return end_;
 }
 
+//Depending on the scenario it will return a different information message for the user
 void InterfaceCore::information(int scenario)
 {
 	cout << endl;
@@ -125,17 +136,24 @@ void InterfaceCore::information(int scenario)
 	}
 }
 
+//Displayes the items in the basket
 void ShoppingBasket::display()
 {
-	if (show_)
+	if (show_ && basket_.size() != 0)
 	{
 		cout << endl;
 		cout << "================[BASKET]=================" << endl;
 		cout << "Basket = {";
 
 		double total = 0;
+		//if the basket size is not 0 then run the loop
 		if (this->basket_.size() != 0)
 		{
+			//the loop iterates through the items in the basket and prints their name(description)
+			//and inceremts the total value to the old total + new total
+			//for example if there are two items one's price is 50
+			//and the others is 100. During the first loop the total will be 50 then
+			//on the second loop it would add the previous total and the current so the total would be 100 + 50 = 150
 			for (int i = 0; i < this->basket_.size(); i++)
 			{
 				cout << " " << this->basket_[i].second->description() << " ";
@@ -150,20 +168,30 @@ void ShoppingBasket::display()
 
 		cout << "}" << endl;
 
+		//Show the user the total of the basket
 		cout << "Basket Total = { $ " << total << " }" << endl;
 	}
 }
 
+//Add the product and accesory to the basket's vector(list)
 void ShoppingBasket::addItemToBasket(Product* product, Accessory* accesory)
 {
 	this->basket_.push_back(make_pair(product, accesory));
 }
 
+//Set the show state of the basket
 bool ShoppingBasket::setShow(bool state)
 {
 	return show_ = state;
 }
 
+//Clear all of the basket
+void ShoppingBasket::clear()
+{
+	this->basket_.clear();
+}
+
+//Return the list of the items
 vector<pair<Product*, Accessory*>> ShoppingBasket::getItems()
 {
 	return basket_;
@@ -186,6 +214,7 @@ MainInterface::MainInterface()
 	}
 }
 
+//Just displays information at the top of the user interface
 void MainInterface::header(string branch)
 {
 	cout << "=================================" << endl;
@@ -237,6 +266,7 @@ void MainInterface::display(ShoppingBasket* basket)
 		case 3: 
 			//chagne the screen to branches
 			this->currentScreen_ = "Branches";
+			delete selectedBranch_;
 			break;
 		}
 
@@ -245,6 +275,11 @@ void MainInterface::display(ShoppingBasket* basket)
 	}
 	else if (this->currentScreen_ == "BranchItems")
 	{
+		this->setNumOfOptions(selectedBranch_->getStoreItems().size() + 3);
+
+		cout << this->getNumChoice() << endl;
+		cout << this->getNumOfOptions() << endl;
+
 		this->header(selectedBranch_->getName());
 
 		this->branchItems(selectedBranch_, basket);
@@ -317,7 +352,7 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 
 	/*loop through each item and give them an index so the program knows
 	which input corresponds to which index for example. Item 1 will be index 1 and it will return hammer.*/
-	if (this->getNumChoice() != 0)
+	if (this->getNumChoice() != 0 && this->getNumChoice() < this->getNumOfOptions() - 3)
 	{
 		int firstSelectedIndex = this->getNumChoice() - 1;
 
@@ -378,6 +413,26 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 			Accessory* emptyAccesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
 			basket->addItemToBasket(item, emptyAccesory);
 			basket->setShow(true);
+			this->infoCase_ = 0;
+			this->typeOfInput_ = true;
+			this->resetChoices();
+		}
+	}
+	else if (this->getNumChoice() == this->getNumOfOptions())
+	{
+		this->infoCase_ = 6;
+		this->typeOfInput_ = false;
+		
+		if (this->getTxtChoice() == "y")
+		{
+			this->infoCase_ = 0;
+			basket->clear();
+			this->resetChoices();
+			this->typeOfInput_ = true;
+			this->currentScreen_ = "BranchOptions";
+		}
+		else if (this->getTxtChoice() == "n")
+		{
 			this->infoCase_ = 0;
 			this->typeOfInput_ = true;
 			this->resetChoices();

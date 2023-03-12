@@ -127,7 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\sqlite3.c" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="Observer.cpp" />
