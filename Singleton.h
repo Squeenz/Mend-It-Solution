@@ -26,8 +26,7 @@ public:
 	bool getEnd();
 };
 
-// Concrete Mediator class
-class ShoppingBasket : public InterfaceCore
+class ShoppingBasket
 {
 private:
 	bool show_ = false;
@@ -39,10 +38,10 @@ public:
 	vector<pair<Product*, Accessory*>> getItems();
 	void removeItemFromBasket(int choice);
 	void clear();
+	void creditCardInput();
+	void payment(vector<string> options, string typeOfPayment);
 	void orderBasketItems();
 };
-
-
 
 class MainInterface : public InterfaceCore
 {
@@ -60,7 +59,7 @@ public:
 	void branchOptions();
 	void removeItem(ShoppingBasket* basket);
 	void branchItems(Branch* selectedBranch, ShoppingBasket* basket);
-	void order();
+	void paymentAndOrder(ShoppingBasket* basket);
 	void orderTracking();
 };
 

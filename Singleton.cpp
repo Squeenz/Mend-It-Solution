@@ -145,6 +145,12 @@ void InterfaceCore::information(int scenario)
 	case 10:
 		cout << "Your basket is empty you can't remove any items" << endl << endl;
 		break;
+	case 11:
+		cout << "Select an payment option" << endl << endl;
+		break;
+	case 12:
+		cout << "You have no items in your basket, you can not order" << endl << endl;
+		break;
 	default:
 		cout << "To add an item to the basket, type the item's id" << endl;
 		cout << "For example if you type 1 then the item labeled as id 1" << endl;
@@ -221,12 +227,133 @@ void ShoppingBasket::clear()
 	this->basket_.clear();
 }
 
+//Get the credit card information and validate the input
+void ShoppingBasket::creditCardInput()
+{
+	bool cardNumberValid = false;
+	bool expirationDateValid = false;
+	bool securityCodeValid = false;
+	int cardNumber = 0;
+	string expirationDate = "";
+	string securityCode = "";
+
+	cout << "Enter your credit card information" << endl;
+	cout << "(10 Digit) Card number: ";
+
+	while (!cardNumberValid)
+	{
+		if (cin >> cardNumber && to_string(cardNumber).length() == 10)
+		{
+			cardNumberValid = true;
+		}
+		else if (to_string(cardNumber).length() < 10)
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "The credit card number was too short (" << to_string(cardNumber).length() << "), Try again: " << endl;
+		}
+		else if (!cin)
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Invalid input, Try again: " << endl;
+		}
+		else
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "The credit card digits are wrong, Try again: " << endl;
+		}
+	}
+
+	cout << "Enter expiration date (MM/YY): ";
+	while (!expirationDateValid)
+	{
+		if (cin >> expirationDate && expirationDate.length() == 5 && expirationDate[2] == '/')
+		{
+			int month = stoi(expirationDate.substr(0, 2));
+			int year = stoi(expirationDate.substr(3, 2));
+			int currentYear = 2023 % 100;
+			
+			if (month >= 1 && month <= 12 && year >= currentYear)
+			{
+				expirationDateValid = true;
+			}
+			else
+			{
+				cout << "Invalid expiration date, Try again: " << endl;
+			}
+		}
+		else if (!cin)
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Invalid input, Try again: " << endl;
+		}
+		else
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Invalid expiration date format, Try again: " << endl;
+		}
+	}
+
+	cout << "Enter security code: ";
+	while (!securityCodeValid)
+	{
+		if (cin >> securityCode && securityCode.length() == 3)
+		{
+			securityCodeValid = true;
+		}
+		else if (!cin)
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Invalid input, Try again: " << endl;
+		}
+		else
+		{
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Invalid security code, Try again: " << endl;
+		}
+	}
+
+	cout << endl;
+	cout << "Credit card information confirmed" << endl;
+}
+
+//Payment system which handles different types of payment
+void ShoppingBasket::payment(const vector<string> options, string typeOfPayment)
+{
+	if (typeOfPayment == options[0])
+	{
+		this->creditCardInput();
+	}
+
+	for (int i = 1; i < options.size(); i++)
+	{
+		if (typeOfPayment == options.at(i))
+		{
+			
+		}
+		
+	}
+}
+
+//Order the items of the shoping basket
+void ShoppingBasket::orderBasketItems()
+{
+	
+}
+
 //Return the list of the items
 vector<pair<Product*, Accessory*>> ShoppingBasket::getItems()
 {
 	return basket_;
 }
 
+//Creates the main loop for the interface
 MainInterface::MainInterface()
 {
 	//Create the shopping basket
@@ -252,6 +379,7 @@ void MainInterface::header(string branch)
 	cout << "=================================" << endl;
 }
 
+//Displayed and hold the logic for screen changes and inputs
 void MainInterface::display(ShoppingBasket* basket)
 {
 	//Shows the all of the branches and their values
@@ -346,6 +474,7 @@ void MainInterface::display(ShoppingBasket* basket)
 
 }
 
+//Display all of the branch options and set the num of options to the max possible amount
 void MainInterface::branches()
 {
 	this->setNumOfOptions(allBranches.size());
@@ -356,6 +485,7 @@ void MainInterface::branches()
 	}
 }
 
+//Display all of the different options each branch can provide
 void MainInterface::branchOptions()
 {
 	vector<string>options = { "Order Items", "Order Tracking", "Go Back" };
@@ -368,6 +498,8 @@ void MainInterface::branchOptions()
 	}
 }
 
+//Remove item interface, print the items in the basket and remove the item selected 
+//By passing the choice to the removeItemFromBasket method which belongs to the ShoppingBasket class
 void MainInterface::removeItem(ShoppingBasket* basket)
 {
 	system("CLS");
@@ -393,6 +525,7 @@ void MainInterface::removeItem(ShoppingBasket* basket)
 	basket->removeItemFromBasket(this->getNumChoice());
 }
 
+//Display branche's items
 void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 {
 	cout << "     ---------Items---------" << endl;
@@ -504,29 +637,84 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 			this->resetChoices();
 		}
 	}
+	//If the basket is not empty and the choice is remove item then it will run the code below
 	else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() != 0 )
 	{
 		bool goBack = false;
-
+		//Run this while loop untill the user decides to go back to the privous menu
 		while (!goBack)
 		{	
+			//Remove item from the basket
 			this->removeItem(basket);
-
+			//If the choice is go back then it will end the while loop
+			//clear the screen and re-draw the header, branch items
+			//change back the input type to be int and show the basket.
+			//also reset the choices of the user so it doesn't automaticly select another item
 			if (this->getNumChoice() == this->getNumOfOptions())
 			{
+				this->resetChoices();
+				goBack = true;
 				system("CLS");
 				this->header(selectedBranch->getName());
 				this->branchItems(selectedBranch, basket);
 				this->typeOfInput_ = true;
 				this->infoCase_ = 0;
 				basket->setShow(true);
-				this->resetChoices();
-				goBack = true;
 			}
 		}
 	}
+	//If the user selects the remove item option and the basket is empty it will return an instruction
+	//warning the user there are no items in the basket
 	else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() == 0)
 	{
 		this->infoCase_ = 10;
 	}
+	else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() != 0)
+	{
+		this->paymentAndOrder(basket);
+	}
+	else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() == 0)
+	{
+		this->infoCase_ = 12;
+	}
 }
+
+//Display the payment selection
+void MainInterface::paymentAndOrder(ShoppingBasket* basket)
+{
+	system("CLS");
+	const vector<string>options = { "Credit Card", "PayOnTheGo", "MobilePay", "Go Back" };
+
+	this->header(selectedBranch_->getName());
+	cout << "     ---------Options---------" << endl;
+
+	this->setNumOfOptions(options.size() + 1);
+
+	for (int i = 0; i < options.size(); i++)
+	{
+		cout << "      " << i + 1 << " :: " << options.at(i) << endl;
+	}
+
+	cout << endl;
+		
+	this->information(11);
+
+	this->getInputAndCheck(true);
+
+	for (int i = 0; i < options.size(); i++)
+	{
+		if (this->getNumChoice() - 1 == i)
+		{
+			system("CLS");
+			this->header(this->selectedBranch_->getName());
+			basket->payment(options, options.at(i));
+		}
+		else if (this->getNumChoice() == this->getNumOfOptions())
+		{
+			system("CLS");
+			this->resetChoices();
+			this->header(this->selectedBranch_->getName());
+			this->branchItems(this->selectedBranch_, basket);
+		}
+	}
+};
