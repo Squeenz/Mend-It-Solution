@@ -1,8 +1,8 @@
 ﻿  Singleton.cpp
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(298,68): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(340,55): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(358,42): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(370,38): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(386,46): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(430,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(310,68): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(351,42): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(363,38): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(377,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(404,46): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Singleton.cpp(447,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Mend-It-Solution.vcxproj -> C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\x64\Debug\Mend-It-Solution.exe

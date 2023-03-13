@@ -37,7 +37,7 @@ public:
 	bool setShow(bool status);
 	void addItemToBasket(Product* product, Accessory* accessory);
 	vector<pair<Product*, Accessory*>> getItems();
-	void removeItemFromBasket();
+	void removeItemFromBasket(int choice);
 	void clear();
 	void orderBasketItems();
 };
@@ -58,6 +58,7 @@ public:
 	void header(string branch);
 	void branches();
 	void branchOptions();
+	void removeItem(ShoppingBasket* basket);
 	void branchItems(Branch* selectedBranch, ShoppingBasket* basket);
 	void order();
 	void orderTracking();

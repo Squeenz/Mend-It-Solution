@@ -8,50 +8,62 @@
 //If isInputNumber is false then it will check if the string is y or n.
 void InterfaceCore::getInputAndCheck(bool isInputNumber)
 {
-	try
-	{
-		if (isInputNumber == true)
-		{
-			cout << "Choose an option (1-" << this->numOfOptions_ << "): ";
+	cout << "===============[INPUT]==================" << endl;
+	bool valid = false;
 
-			if ((cin >> numChoice_) && isInputNumber) // check if the input is a number
+	while (!valid)
+	{
+		try
+		{
+			if (isInputNumber == true)
 			{
-				if (numChoice_ > numOfOptions_ || numChoice_ < 1)
+				cout << "Choose an option (1-" << this->numOfOptions_ << "): ";
+
+				if ((cin >> this->numChoice_) && isInputNumber) // check if the input is a number
 				{
-					numChoice_ = 0;
+					if (this->numChoice_ > this->numOfOptions_ || this->numChoice_ < 1)
+					{
+						this->numChoice_ = 0;
+						cin.clear();
+						cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
+						throw invalid_argument("Incorrect number value, Try again: ");
+					}
+					else
+					{
+						valid = true;
+						this->numChoice_;
+					}
+				}
+				else
+				{
+					this->numChoice_;
 					cin.clear();
 					cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
-					throw invalid_argument("Incorrect number value, Try again: ");
+					throw invalid_argument("Incorrect data type value, Try again: ");
 				}
 			}
 			else
 			{
-				numChoice_;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
-				throw invalid_argument("Incorrect data type value, Try again: ");
-			}
-		}
-		else
-		{
-			cout << "Choose an option (y/n): ";
+				cout << "Choose an option (y/n): ";
 
-			if ((cin >> txtChoice_) && txtChoice_ == "y" || txtChoice_ == "n")
-			{
-				txtChoice_;
-			}
-			else
-			{
-				txtChoice_ = "";
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
-				throw invalid_argument("Incorrect answer, Try again (y/n): ");
+				if ((cin >> txtChoice_) && txtChoice_ == "y" || txtChoice_ == "n")
+				{
+					txtChoice_;
+					valid = true;
+				}
+				else
+				{
+					txtChoice_ = "";
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard the invalid input
+					throw invalid_argument("Incorrect answer, Try again (y/n): ");
+				}
 			}
 		}
-	}
-	catch (const invalid_argument& error)
-	{
-		cout << error.what() << endl;
+		catch (const invalid_argument& error)
+		{
+			cout << error.what() << endl;
+		}
 	}
 }
 
@@ -128,6 +140,10 @@ void InterfaceCore::information(int scenario)
 		break;
 	case 9:
 		cout << "Choose an item you want to remove from the basket" << endl;
+		cout << "Items that have been added together will be removed together" << endl << endl;
+		break;
+	case 10:
+		cout << "Your basket is empty you can't remove any items" << endl << endl;
 		break;
 	default:
 		cout << "To add an item to the basket, type the item's id" << endl;
@@ -178,6 +194,19 @@ void ShoppingBasket::display()
 void ShoppingBasket::addItemToBasket(Product* product, Accessory* accesory)
 {
 	this->basket_.push_back(make_pair(product, accesory));
+}
+
+//Remove item from the basket
+void ShoppingBasket::removeItemFromBasket(int choice)
+{
+	for (int i = 0; i < this->basket_.size(); i++)
+	{
+		if (choice - 1 == i)
+		{
+			this->basket_.erase(this->basket_.begin() + i);
+			this->setShow(false);
+		}
+	}
 }
 
 //Set the show state of the basket
@@ -234,25 +263,9 @@ void MainInterface::display(ShoppingBasket* basket)
 		this->branches();
 		//Call the information function to show {Case 1: Instructions}
 		this->information(1);
+
 		//Get the input from the user and only take int as input
-		cout << "===============[INPUT]==================" << endl;
-
-		//Chagne this check into the function
-		bool valid = false;
-
-		while (valid == false)
-		{
-			this->getInputAndCheck(true);
-			
-			if (this->getNumChoice() - 1 < 0 || this->getNumChoice() - 1 > this->getNumOfOptions())
-			{
-				valid = false;
-			}
-			else
-			{
-				valid = true;
-			}
-		}
+		this->getInputAndCheck(true);
 
 		//Create the branch using the factory desing pattern
 		this->selectedBranch_ = BranchFactory::createBranch(allBranches[this->getNumChoice() - 1]);
@@ -268,7 +281,6 @@ void MainInterface::display(ShoppingBasket* basket)
 		//Call the information function to show {Case 2: Instructions}
 		this->information(2);
 		//Get the input from the user and only take int as input
-		cout << "===============[INPUT]==================" << endl;
 		this->getInputAndCheck(true);
 
 		//Gets the value which is valid and depedning on the value
@@ -308,7 +320,6 @@ void MainInterface::display(ShoppingBasket* basket)
 
 		this->information(this->infoCase_);
 
-		cout << "===============[INPUT]==================" << endl;
 		this->getInputAndCheck(this->typeOfInput_);
 
 		if (this->getNumChoice() == this->getNumOfOptions())
@@ -330,24 +341,6 @@ void MainInterface::display(ShoppingBasket* basket)
 				this->typeOfInput_ = true;
 				this->resetChoices();
 			}
-		}
-		else if (this->getNumChoice() == this->getNumOfOptions() - 2)
-		{
-			system("CLS");
-			this->header(this->selectedBranch_->getName());
-
-			cout << "       ---------ITEMS---------" << endl << endl;
-			this->setNumOfOptions(basket->getItems().size() + 1);
-
-			for (int i = 0; i < basket->getItems().size(); i++)
-			{
-				cout << "   " << i + 1 << " :: " << basket->getItems().at(i).second->description();
-				cout << endl;
-			}
-
-			cout << "   " << this->getNumOfOptions() << " :: Go Back" << endl;
-
-			cout << endl;
 		}
 	}
 
@@ -373,6 +366,31 @@ void MainInterface::branchOptions()
 	{
 		cout << "      " << i + 1 << " :: " << options.at(i) << endl;
 	}
+}
+
+void MainInterface::removeItem(ShoppingBasket* basket)
+{
+	system("CLS");
+	this->header(this->selectedBranch_->getName());
+
+	cout << "     ---------ITEMS---------" << endl;
+	this->setNumOfOptions(basket->getItems().size() + 1);
+
+	for (int i = 0; i < basket->getItems().size(); i++)
+	{
+		cout << "      " << i + 1 << " :: " << basket->getItems().at(i).second->description();
+		cout << endl;
+	}
+	cout << endl;
+
+	cout << "     ---------Options-------" << endl;
+	cout << "      " << this->getNumOfOptions() << " :: " << "Go Back" << endl;
+
+	this->infoCase_ = 9;
+	this->information(this->infoCase_);
+	this->typeOfInput_ = true;
+	this->getInputAndCheck(this->typeOfInput_);
+	basket->removeItemFromBasket(this->getNumChoice());
 }
 
 void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
@@ -409,7 +427,6 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 	//set current accesory as empty
 	string currentAccesory = "";
 	double currentAccesoryPrice = 0;
-
 	string localScreen = "items";
 
 	/*loop through each item and give them an index so the program knows
@@ -423,7 +440,7 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 		this->typeOfInput_ = false;
 		this->infoCase_ = 3;
 
-		if(this->getTxtChoice() == "y")
+		if (this->getTxtChoice() == "y")
 		{
 			system("CLS");
 
@@ -451,36 +468,29 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 
 			if (currentAccesory == "" && currentAccesoryPrice == 0)
 			{
-				cout << "===============[INPUT]==================" << endl;
 				this->getInputAndCheck(this->typeOfInput_);
 
-				bool valid = false;
-
-				while (valid == false)
+				if (this->getNumChoice() - 1 > this->getNumOfOptions() || this->getNumChoice() - 1 < 0)
 				{
-					if (this->getNumChoice() - 1 > this->getNumOfOptions() || this->getNumChoice() - 1 < 0)
-					{
-						this->getInputAndCheck(this->typeOfInput_);
-					}
-					else if (this->getNumChoice() - 1 <= this->getNumOfOptions())
-					{
-						valid = true;
-						int secondSelectedIndex = this->getNumChoice() - 1;
+					this->getInputAndCheck(this->typeOfInput_);
+				}
+				else if (this->getNumChoice() - 1 <= this->getNumOfOptions())
+				{
+					int secondSelectedIndex = this->getNumChoice() - 1;
 
-						currentAccesory = branchAccesories[secondSelectedIndex][0];
-						currentAccesoryPrice = stod(branchAccesories[secondSelectedIndex][1]);
-						Accessory* accesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
+					currentAccesory = branchAccesories[secondSelectedIndex][0];
+					currentAccesoryPrice = stod(branchAccesories[secondSelectedIndex][1]);
+					Accessory* accesory = new Accessory(item, currentAccesory, currentAccesoryPrice);
 
-						basket->addItemToBasket(item, accesory);
-						basket->setShow(true);
-						this->infoCase_ = 0;
-						this->typeOfInput_ = true;
-						this->resetChoices();
+					basket->addItemToBasket(item, accesory);
+					basket->setShow(true);
+					this->infoCase_ = 0;
+					this->typeOfInput_ = true;
+					this->resetChoices();
 
-						system("CLS");
-						this->header(selectedBranch->getName());
-						this->branchItems(selectedBranch, basket);
-					}
+					system("CLS");
+					this->header(selectedBranch->getName());
+					this->branchItems(selectedBranch, basket);
 				}
 			}
 		}
@@ -493,5 +503,30 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 			this->typeOfInput_ = true;
 			this->resetChoices();
 		}
+	}
+	else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() != 0 )
+	{
+		bool goBack = false;
+
+		while (!goBack)
+		{	
+			this->removeItem(basket);
+
+			if (this->getNumChoice() == this->getNumOfOptions())
+			{
+				system("CLS");
+				this->header(selectedBranch->getName());
+				this->branchItems(selectedBranch, basket);
+				this->typeOfInput_ = true;
+				this->infoCase_ = 0;
+				basket->setShow(true);
+				this->resetChoices();
+				goBack = true;
+			}
+		}
+	}
+	else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() == 0)
+	{
+		this->infoCase_ = 10;
 	}
 }
