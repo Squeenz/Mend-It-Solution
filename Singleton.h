@@ -39,6 +39,7 @@ public:
 	void removeItemFromBasket(int choice);
 	void clear();
 	void creditCardInput();
+	void otherPaymentInput();
 	void payment(vector<string> options, string typeOfPayment);
 	void orderBasketItems();
 };

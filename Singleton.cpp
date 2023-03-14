@@ -1,6 +1,8 @@
 #include "Singleton.h"
 #include "chrono"
 #include "thread"
+#include "regex"
+#include "conio.h"
 
 //Takes user input and check is the inpud is valid, depending on the bool isInputNumber
 //It will run a different validation check. If isInputNumber true then it will check if the int input is
@@ -323,6 +325,65 @@ void ShoppingBasket::creditCardInput()
 	cout << "Credit card information confirmed" << endl;
 }
 
+//Get the input of the other payments if selected
+void ShoppingBasket::otherPaymentInput()
+{
+	bool emailValid = false;
+	string email = "";
+
+	cout << "Enter your email: " << endl;
+	while (!emailValid)
+	{
+		cin >> email;
+
+		bool hasAtSymbol = false;
+		for (int i = 0; i < email.size(); i++)
+		{
+			if (email.at(i) == '@')
+			{
+				if (i != 0 && i != email.size() - 1 && !hasAtSymbol)
+				{
+					hasAtSymbol = true;
+				}
+				else
+				{
+					cout << "Email invalid" << endl;
+					break;
+				}
+			}
+		}
+		if (hasAtSymbol)
+		{
+			emailValid = true;
+		}
+	}
+
+	string password = "";
+	regex reg(".{8,}"); // at least 8 characters
+	char ch;
+
+	cout << "Enter your password: ";
+
+	while ((ch = _getch()) != '\r') // loop until user presses enter
+	{
+		password += ch;
+		cout << "*";
+	}
+	cout << endl;
+
+	if (regex_match(password, reg))
+	{
+		string hidden_password(password.size(), '*');
+	}
+	else
+	{
+		cout << "Your password is invalid" << endl;
+	}
+	cout << endl;
+
+	cout << "Your account details are confirmed" << endl;
+}
+
 //Payment system which handles different types of payment
 void ShoppingBasket::payment(const vector<string> options, string typeOfPayment)
 {
@@ -335,9 +396,8 @@ void ShoppingBasket::payment(const vector<string> options, string typeOfPayment)
 	{
 		if (typeOfPayment == options.at(i))
 		{
-			
+			this->otherPaymentInput();
 		}
-		
 	}
 }
 
@@ -685,10 +745,10 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 	system("CLS");
 	const vector<string>options = { "Credit Card", "PayOnTheGo", "MobilePay", "Go Back" };
 
+	this->setNumOfOptions(options.size());
+
 	this->header(selectedBranch_->getName());
 	cout << "     ---------Options---------" << endl;
-
-	this->setNumOfOptions(options.size() + 1);
 
 	for (int i = 0; i < options.size(); i++)
 	{
