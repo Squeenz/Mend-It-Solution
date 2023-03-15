@@ -153,6 +153,12 @@ void InterfaceCore::information(int scenario)
 	case 12:
 		cout << "You have no items in your basket, you can not order" << endl << endl;
 		break;
+	case 13:
+		cout << "There are no online orders to track" << endl << endl;
+		break;
+	case 14:
+		cout << "There are no instore orders to track" << endl << endl;
+		break;
 	default:
 		cout << "To add an item to the basket, type the item's id" << endl;
 		cout << "For example if you type 1 then the item labeled as id 1" << endl;
@@ -402,9 +408,18 @@ void ShoppingBasket::payment(const vector<string> options, string typeOfPayment)
 }
 
 //Order the items of the shoping basket
-void ShoppingBasket::orderBasketItems()
+void ShoppingBasket::orderBasketItems(Branch* selectedBranch)
 {
-	
+	//string branch, string type, vector<pair<Product*, Accessory*>> items
+	Order order = Order(selectedBranch->getName(), "Online", this->basket_);
+	selectedBranch->saveOrderToBranch(order, "Online");
+
+	OrderTracker tracker1(selectedBranch->getName() + "  Online");
+	Subject onlineOrderSub;
+	onlineOrderSub.Attach(&tracker1);
+	onlineOrderSub.Notify(selectedBranch->getBranchOrders("Online"));
+	onlineOrderSub.Detach(&tracker1);
+	this->clear();
 }
 
 //Return the list of the items
@@ -434,9 +449,9 @@ MainInterface::MainInterface()
 //Just displays information at the top of the user interface
 void MainInterface::header(string branch)
 {
-	cout << "=================================" << endl;
+	cout << "========================================" << endl;
 	cout << " Mend It Solutions  :: " << branch << endl;
-	cout << "=================================" << endl;
+	cout << "========================================" << endl;
 }
 
 //Displayed and hold the logic for screen changes and inputs
@@ -502,7 +517,7 @@ void MainInterface::display(ShoppingBasket* basket)
 
 		this->header(selectedBranch_->getName());
 
-		this->branchItems(selectedBranch_, basket);
+		this->branchItems(basket);
 
 		basket->display();
 
@@ -530,6 +545,10 @@ void MainInterface::display(ShoppingBasket* basket)
 				this->resetChoices();
 			}
 		}
+	}
+	else if (this->currentScreen_ == "OrderTracking")
+	{
+		this->orderTracking();
 	}
 
 }
@@ -586,12 +605,12 @@ void MainInterface::removeItem(ShoppingBasket* basket)
 }
 
 //Display branche's items
-void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
+void MainInterface::branchItems(ShoppingBasket* basket)
 {
 	cout << "     ---------Items---------" << endl;
 	//Get the selected branch items and accesories and turn it into private variables for this function
-	vector<vector<string>> branchItems = selectedBranch->getStoreItems();
-	vector<vector<string>> branchAccesories = selectedBranch->getStoreAccesories();
+	vector<vector<string>> branchItems = this->selectedBranch_->getStoreItems();
+	vector<vector<string>> branchAccesories = this->selectedBranch_->getStoreAccesories();
 
 	//Set the amount of posssilbe choices
 	this->setNumOfOptions(branchItems.size() + 3);
@@ -641,7 +660,7 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 			this->typeOfInput_ = true;
 			this->resetChoices();
 
-			header(selectedBranch->getName());
+			header(selectedBranch_->getName());
 
 			cout << "     ---------Items---------" << endl;
 			for (int i = 0; i < branchAccesories.size(); i++)
@@ -682,8 +701,8 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 					this->resetChoices();
 
 					system("CLS");
-					this->header(selectedBranch->getName());
-					this->branchItems(selectedBranch, basket);
+					this->header(selectedBranch_->getName());
+					this->branchItems(basket);
 				}
 			}
 		}
@@ -715,8 +734,8 @@ void MainInterface::branchItems(Branch* selectedBranch, ShoppingBasket* basket)
 				this->resetChoices();
 				goBack = true;
 				system("CLS");
-				this->header(selectedBranch->getName());
-				this->branchItems(selectedBranch, basket);
+				this->header(selectedBranch_->getName());
+				this->branchItems(basket);
 				this->typeOfInput_ = true;
 				this->infoCase_ = 0;
 				basket->setShow(true);
@@ -768,13 +787,58 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 			system("CLS");
 			this->header(this->selectedBranch_->getName());
 			basket->payment(options, options.at(i));
+			basket->orderBasketItems(this->selectedBranch_);
 		}
 		else if (this->getNumChoice() == this->getNumOfOptions())
 		{
 			system("CLS");
 			this->resetChoices();
 			this->header(this->selectedBranch_->getName());
-			this->branchItems(this->selectedBranch_, basket);
+			this->branchItems(basket);
 		}
 	}
 };
+
+//Display all order tracking
+void MainInterface::orderTracking()
+{
+	this->header(this->selectedBranch_->getName());
+	this->setNumOfOptions(1);
+	
+	if (this->selectedBranch_->getBranchOrders("Online").size() != 0)
+	{
+		OrderTracker tracker1(this->selectedBranch_->getName() + "  Online");
+		Subject onlineOrderSub;
+		onlineOrderSub.Attach(&tracker1);
+		onlineOrderSub.Notify(this->selectedBranch_->getBranchOrders("Online"));
+		onlineOrderSub.Detach(&tracker1);
+	}
+	else
+	{
+		this->infoCase_ = 13;
+	}
+
+	if (this->selectedBranch_->getBranchOrders("Instore").size() != 0)
+	{
+		OrderTracker tracker2(this->selectedBranch_->getName() + "  Instore");
+		Subject instoreOrderSub;
+		instoreOrderSub.Attach(&tracker2);
+		instoreOrderSub.Notify(this->selectedBranch_->getBranchOrders("Instore"));
+		instoreOrderSub.Detach(&tracker2);
+	}
+	else
+	{
+		this->infoCase_ = 14;
+	}
+
+	this->information(this->infoCase_);
+
+	cout << "	1  :: Go Back" << endl;
+
+	this->getInputAndCheck(true);
+
+	if (this->getNumChoice() == 1)
+	{
+		this->currentScreen_ = "BranchOptions";
+	}
+}

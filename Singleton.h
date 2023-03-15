@@ -41,7 +41,7 @@ public:
 	void creditCardInput();
 	void otherPaymentInput();
 	void payment(vector<string> options, string typeOfPayment);
-	void orderBasketItems();
+	void orderBasketItems(Branch* selectedBranch);
 };
 
 class MainInterface : public InterfaceCore
@@ -59,7 +59,7 @@ public:
 	void branches();
 	void branchOptions();
 	void removeItem(ShoppingBasket* basket);
-	void branchItems(Branch* selectedBranch, ShoppingBasket* basket);
+	void branchItems(ShoppingBasket* basket);
 	void paymentAndOrder(ShoppingBasket* basket);
 	void orderTracking();
 };

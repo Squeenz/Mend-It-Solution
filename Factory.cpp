@@ -1,5 +1,29 @@
 #include "Factory.h"
 
+void Branch::saveOrderToBranch(Order order, string type)
+{
+	if (type == "Online")
+	{
+		this->onlineOrders.push_back(order);
+	}
+	else if (type == "Instore")
+	{
+		this->instoreOrders.push_back(order);
+	}
+}
+
+vector<Order> Branch::getBranchOrders(string type)
+{
+	if (type == "Online")
+	{
+		return this->onlineOrders;
+	}
+	else if (type == "Instore")
+	{
+		return this->instoreOrders;
+	}
+}
+
 //Treforest Branch public methods
 string Treforest::getName() const
 {

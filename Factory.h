@@ -4,15 +4,21 @@
 
 #include <vector>
 #include <string>
+#include "Observer.h"
 
 using namespace std;
 
 class Branch
 {
+private:
+	vector<Order> onlineOrders = {};
+	vector<Order> instoreOrders = {};
 public:
 	virtual string getName() const = 0;
 	virtual vector<vector<string>> getStoreItems() const = 0;
 	virtual vector<vector<string>> getStoreAccesories() const = 0;
+	void saveOrderToBranch(Order order, string type);
+	vector<Order> getBranchOrders(string type);
 };
 
 class Treforest : public Branch
