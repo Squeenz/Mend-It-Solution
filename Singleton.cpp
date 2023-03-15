@@ -128,7 +128,7 @@ void InterfaceCore::information(int scenario)
 		cout << "Which accesory would you like to add" << endl << endl;
 		break;
 	case 5:
-		cout << "Would you like this " << " to be added to your order ? " << endl << endl;
+		cout << "Which delivery options would you like?" << endl << endl;
 		break;
 	case 6:
 		cout << "Are you sure you want to leave because the items in the basket will be deleted" << endl << endl;
@@ -148,7 +148,7 @@ void InterfaceCore::information(int scenario)
 		cout << "Your basket is empty you can't remove any items" << endl << endl;
 		break;
 	case 11:
-		cout << "Select an payment option" << endl << endl;
+		cout << "Select an payment option, Sorry you can not go back" << endl << endl;
 		break;
 	case 12:
 		cout << "You have no items in your basket, you can not order" << endl << endl;
@@ -158,6 +158,9 @@ void InterfaceCore::information(int scenario)
 		break;
 	case 14:
 		cout << "There are no instore orders to track" << endl << endl;
+		break;
+	case 15:
+		cout << "Order completed" << endl << endl;
 		break;
 	default:
 		cout << "To add an item to the basket, type the item's id" << endl;
@@ -205,7 +208,7 @@ void ShoppingBasket::display()
 }
 
 //Add the product and accesory to the basket's vector(list)
-void ShoppingBasket::addItemToBasket(Product* product, Accessory* accesory)
+void ShoppingBasket::addItemToBasket(Product* product, ProductDecorator* accesory)
 {
 	this->basket_.push_back(make_pair(product, accesory));
 }
@@ -413,19 +416,18 @@ void ShoppingBasket::orderBasketItems(Branch* selectedBranch)
 	//string branch, string type, vector<pair<Product*, Accessory*>> items
 	Order order = Order(selectedBranch->getName(), "Online", this->basket_);
 	selectedBranch->saveOrderToBranch(order, "Online");
-
-	OrderTracker tracker1(selectedBranch->getName() + "  Online");
-	Subject onlineOrderSub;
-	onlineOrderSub.Attach(&tracker1);
-	onlineOrderSub.Notify(selectedBranch->getBranchOrders("Online"));
-	onlineOrderSub.Detach(&tracker1);
-	this->clear();
 }
 
 //Return the list of the items
-vector<pair<Product*, Accessory*>> ShoppingBasket::getItems()
+vector<pair<Product*, ProductDecorator*>> ShoppingBasket::getItems()
 {
-	return basket_;
+	return this->basket_;
+}
+
+//Return the last item in the list
+Product* ShoppingBasket::getLastItem()
+{
+	return this->basket_.back().first;
 }
 
 //Creates the main loop for the interface
@@ -468,7 +470,7 @@ void MainInterface::display(ShoppingBasket* basket)
 		this->information(1);
 
 		//Get the input from the user and only take int as input
-		this->getInputAndCheck(true);
+		this->getInputAndCheck(this->typeOfInput_);
 
 		//Create the branch using the factory desing pattern
 		this->selectedBranch_ = BranchFactory::createBranch(allBranches[this->getNumChoice() - 1]);
@@ -484,7 +486,7 @@ void MainInterface::display(ShoppingBasket* basket)
 		//Call the information function to show {Case 2: Instructions}
 		this->information(2);
 		//Get the input from the user and only take int as input
-		this->getInputAndCheck(true);
+		this->getInputAndCheck(this->typeOfInput_);
 
 		//Gets the value which is valid and depedning on the value
 		//changes the current screen which changes what is being displayed.
@@ -750,7 +752,7 @@ void MainInterface::branchItems(ShoppingBasket* basket)
 	}
 	else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() != 0)
 	{
-		this->paymentAndOrder(basket);
+		this->deliveryOptions(basket);
 	}
 	else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() == 0)
 	{
@@ -758,11 +760,64 @@ void MainInterface::branchItems(ShoppingBasket* basket)
 	}
 }
 
+void MainInterface::deliveryOptions(ShoppingBasket* basket)
+{
+	system("CLS");
+	this->header(this->selectedBranch_->getName());
+	this->infoCase_ = 5;
+	basket->setShow(false);
+
+	vector<vector<string>> deliveryOptions = { {"Next Day Delivery", "15.50"}, {"Express Delivery", "5.50"}};
+	this->setNumOfOptions(deliveryOptions.size() + 1);
+
+	cout << "     ---------Options-------" << endl;
+	for (int i = 0; i < deliveryOptions.size(); i++)
+	{
+		cout << "      " << i + 1 << " :: ";
+
+		for (int y = 0; y < deliveryOptions.size(); y++)
+		{
+			cout << deliveryOptions[i][y] << " - ";
+		}
+
+		cout << endl;
+	}
+	cout << "      " << this->getNumOfOptions() << " :: " << "Go Back" << endl << endl;
+
+	this->resetChoices();
+	this->getInputAndCheck(true);
+
+	Product* item = new Item("Delivery", 0);
+
+	if (this->getNumChoice() == 1)
+	{
+		NextDayDelivery* delivery = new NextDayDelivery(item);
+		basket->addItemToBasket(item, delivery);
+		this->paymentAndOrder(basket);
+	}
+	else if (this->getNumChoice() == 2)
+	{
+		ExpressDelivery* delivery = new ExpressDelivery(item);
+		basket->addItemToBasket(item, delivery);
+		this->paymentAndOrder(basket);
+	}
+	else if (this->getNumChoice() == this->getNumOfOptions())
+	{
+		system("CLS");
+		this->resetChoices();
+		this->infoCase_ = 0;
+		this->header(selectedBranch_->getName());
+		basket->setShow(true);
+		this->branchItems(basket);
+	};
+
+}
+
 //Display the payment selection
 void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 {
 	system("CLS");
-	const vector<string>options = { "Credit Card", "PayOnTheGo", "MobilePay", "Go Back" };
+	const vector<string>options = { "Credit Card", "PayOnTheGo", "MobilePay" };
 
 	this->setNumOfOptions(options.size());
 
@@ -774,11 +829,8 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 		cout << "      " << i + 1 << " :: " << options.at(i) << endl;
 	}
 
-	cout << endl;
-		
 	this->information(11);
-
-	this->getInputAndCheck(true);
+	//this->getInputAndCheck(typeOfInput_);
 
 	for (int i = 0; i < options.size(); i++)
 	{
@@ -788,13 +840,16 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 			this->header(this->selectedBranch_->getName());
 			basket->payment(options, options.at(i));
 			basket->orderBasketItems(this->selectedBranch_);
-		}
-		else if (this->getNumChoice() == this->getNumOfOptions())
-		{
-			system("CLS");
+			basket->clear();
+
+			this->currentScreen_ = "BranchOptions";
 			this->resetChoices();
+			system("CLS");
+			this->infoCase_ = 2;
+
+			//this->typeOfInput_ = true;
 			this->header(this->selectedBranch_->getName());
-			this->branchItems(basket);
+			this->branchOptions();
 		}
 	}
 };

@@ -11,8 +11,8 @@ using namespace std;
 class Branch
 {
 private:
-	vector<Order> onlineOrders = {};
-	vector<Order> instoreOrders = {};
+	vector<Order> onlineOrders;
+	vector<Order> instoreOrders;
 public:
 	virtual string getName() const = 0;
 	virtual vector<vector<string>> getStoreItems() const = 0;

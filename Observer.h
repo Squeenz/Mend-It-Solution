@@ -22,17 +22,17 @@ private:
 	string status_;
 	string type_;
 	string branch_;
-	vector<pair<Product*, Accessory*>> items_;
+	vector<pair<Product*, ProductDecorator*>> items_;
 	string generateID(const int len);
 public:
-	Order(string branch, string type, vector<pair<Product*, Accessory*>> items);
+	Order(string branch, string type, vector<pair<Product*, ProductDecorator*>> items);
 	string getBranch();
 	string setID();
 	string getID();
 	string getDate();
 	string setStatus(string state);
 	string getStatus();
-	vector<pair<Product*, Accessory*>> getItems();
+	vector<pair<Product*, ProductDecorator*>> getItems();
 };
 
 class Observer {

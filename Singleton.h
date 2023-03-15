@@ -11,9 +11,9 @@ using namespace std;
 class InterfaceCore
 {
 private:
-	int numOfOptions_;
-	int numChoice_;
-	string txtChoice_;
+	int numOfOptions_ = 0;
+	int numChoice_ = 0;
+	string txtChoice_ = "";
 	bool end_ = false;
 public:
 	void information(int scenario);
@@ -30,12 +30,13 @@ class ShoppingBasket
 {
 private:
 	bool show_ = false;
-	vector<pair<Product*, Accessory*>> basket_;
+	vector<pair<Product*, ProductDecorator*>> basket_;
 public:
 	void display();
 	bool setShow(bool status);
-	void addItemToBasket(Product* product, Accessory* accessory);
-	vector<pair<Product*, Accessory*>> getItems();
+	void addItemToBasket(Product* product, ProductDecorator* accessory);
+	vector<pair<Product*, ProductDecorator*>> getItems();
+	Product* getLastItem();
 	void removeItemFromBasket(int choice);
 	void clear();
 	void creditCardInput();
@@ -61,6 +62,7 @@ public:
 	void removeItem(ShoppingBasket* basket);
 	void branchItems(ShoppingBasket* basket);
 	void paymentAndOrder(ShoppingBasket* basket);
+	void deliveryOptions(ShoppingBasket* basket);
 	void orderTracking();
 };
 
