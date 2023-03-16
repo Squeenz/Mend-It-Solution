@@ -238,7 +238,7 @@ void ShoppingBasket::clear()
 	this->basket_.clear();
 }
 
-//Get the credit card information and validate the input
+//Get the credit card information and validates the input
 void ShoppingBasket::creditCardInput()
 {
 	bool cardNumberValid = false;
@@ -474,10 +474,13 @@ void MainInterface::display(ShoppingBasket* basket)
 
 		//Create the branch using the factory desing pattern
 		this->selectedBranch_ = BranchFactory::createBranch(allBranches[this->getNumChoice() - 1]);
+
+		this->selectedBranch_->createData(this->selectedBranch_);
+
 		//Change the current screen to branch options
 		this->currentScreen_ = "BranchOptions";
 
-		//this->selectedBranch_->createData(this->selectedBranch_);
+		//Import the json data that has been created or is there
 		this->selectedBranch_->importData();
 	}
 	else if (this->currentScreen_ == "BranchOptions")
@@ -515,28 +518,35 @@ void MainInterface::display(ShoppingBasket* basket)
 	}
 	else if (this->currentScreen_ == "BranchItems")
 	{
+		//set the amount of possible user options to the amount of items plus the additional options
 		this->setNumOfOptions(selectedBranch_->getStoreItems().size() + 3);
 
-		cout << this->getNumChoice() << endl;
-		cout << this->getNumOfOptions() << endl;
-
+		//Display the header at the top of the screen with the current branch name
 		this->header(selectedBranch_->getName());
 
+		//Dispaly all of the items of the branch
 		this->branchItems(basket);
 
+		//Dispaly the basket
 		basket->display();
 
+		//Display the information panel
 		this->information(this->infoCase_);
 
+		//Wait for user input and validate it according to the amount of possible options
 		this->getInputAndCheck(this->typeOfInput_);
 
+		//if the user selects the last option show a promt and deal according to the input
 		if (this->getNumChoice() == this->getNumOfOptions())
 		{
+			//chagne the info case to 6 and set the user input to be (y/n)
 			this->infoCase_ = 6;
 			this->typeOfInput_ = false;
 
 			if (this->getTxtChoice() == "y")
 			{
+				//if the answer was y then change the screen to branch options
+				//set info case 0, set user input to int, reset the choice and reset the basket
 				this->currentScreen_ = "BranchOptions";
 				this->infoCase_ = 0;
 				this->typeOfInput_ = true;
@@ -545,6 +555,7 @@ void MainInterface::display(ShoppingBasket* basket)
 			}
 			else if (this->getTxtChoice() == "n")
 			{
+				//set info case to 0, set the input to int and reset the choices
 				this->infoCase_ = 0;
 				this->typeOfInput_ = true;
 				this->resetChoices();
@@ -552,6 +563,7 @@ void MainInterface::display(ShoppingBasket* basket)
 		}
 		else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() != 0)
 		{
+			//change the screen to delivery options
 			this->currentScreen_ = "DeliveryOptions";
 		}
 		//If the basket is not empty and the choice is remove item then it will run the code below
@@ -584,19 +596,24 @@ void MainInterface::display(ShoppingBasket* basket)
 		//warning the user there are no items in the basket
 		else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() == 0)
 		{
+			//show info case 10
 			this->infoCase_ = 10;
 		}
 		else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() == 0)
 		{
+			//Show the info case 12
 			this->infoCase_ = 12;
 		}
 	}
 	else if (this->currentScreen_ == "OrderTracking")
 	{
+		//Display the order tracking screen
 		this->orderTracking();
 	}
 	else if (this->currentScreen_ == "DeliveryOptions")
 	{
+		//Display the delivery screen and pass the shopping basket through so the devilery option
+		//can be added to the items
 		this->deliveryOptions(basket);
 	}
 
@@ -630,9 +647,13 @@ void MainInterface::branchOptions()
 //By passing the choice to the removeItemFromBasket method which belongs to the ShoppingBasket class
 void MainInterface::removeItem(ShoppingBasket* basket)
 {
+	//clear the screen
 	system("CLS");
+
+	//Change the header to display the selected branch's name
 	this->header(this->selectedBranch_->getName());
 
+	//Show the current items in the basket by iterating through the pair vector.
 	cout << "     ---------ITEMS---------" << endl;
 	this->setNumOfOptions(basket->getItems().size() + 1);
 
@@ -646,10 +667,11 @@ void MainInterface::removeItem(ShoppingBasket* basket)
 	cout << "     ---------Options-------" << endl;
 	cout << "      " << this->getNumOfOptions() << " :: " << "Go Back" << endl;
 
-	this->infoCase_ = 9;
-	this->information(this->infoCase_);
-	this->typeOfInput_ = true;
-	this->getInputAndCheck(this->typeOfInput_);
+	//Show the info case 9 in the information panel
+	this->information(9);
+	//Get the users int input and make sure it's valid
+	this->getInputAndCheck(true);
+	//Remove the selected item from the basket
 	basket->removeItemFromBasket(this->getNumChoice());
 }
 
@@ -695,7 +717,7 @@ void MainInterface::branchItems(ShoppingBasket* basket)
 	if (this->getNumChoice() != 0 && this->getNumChoice() <= this->getNumOfOptions() - 3)
 	{
 		int firstSelectedIndex = this->getNumChoice() - 1;
-
+		
 		Product* item = new Item(branchItems[firstSelectedIndex][0], stod(branchItems[firstSelectedIndex][1]));
 
 		this->typeOfInput_ = false;
@@ -767,6 +789,7 @@ void MainInterface::branchItems(ShoppingBasket* basket)
 	}
 }
 
+//Show the delivery options and allow user to select them
 void MainInterface::deliveryOptions(ShoppingBasket* basket)
 {
 	system("CLS");

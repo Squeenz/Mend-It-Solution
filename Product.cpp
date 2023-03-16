@@ -1,6 +1,6 @@
 #include "Product.h"
 
-//Item class public methods
+//Item class public methods, returns desciprtion, price
 Item::Item(string title, double price) : title_(title), price_(price) {};
 string Item::description()
 {

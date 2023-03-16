@@ -1,17 +1,17 @@
 #include "iostream"
-#include "sqlite3.h"
 #include "Factory.h"
 #include "Product.h"
 #include "Observer.h"
 #include "Singleton.h"
-#include "sqlite3.h"
-#include "stdio.h"
+#include "Windows.h"
 
 using namespace std;
 
 int main()
 {
+	//Create the interface which will display and link everything together
 	MainInterface* ClientInterface = new MainInterface;
 
+	delete ClientInterface;
 	return 0;
 }

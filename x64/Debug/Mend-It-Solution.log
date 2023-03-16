@@ -1,14 +1,2 @@
-﻿  Factory.cpp
-  Singleton.cpp
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(518,68): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(608,42): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(621,38): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(637,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(665,46): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(708,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(778,50): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Singleton.cpp(826,38): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Source.cpp
-  Generating Code...
-C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\Factory.cpp(75): warning C4715: 'Branch::getBranchOrders': not all control paths return a value
+﻿  Source.cpp
   Mend-It-Solution.vcxproj -> C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\x64\Debug\Mend-It-Solution.exe
