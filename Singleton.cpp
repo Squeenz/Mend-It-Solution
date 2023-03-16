@@ -476,6 +476,9 @@ void MainInterface::display(ShoppingBasket* basket)
 		this->selectedBranch_ = BranchFactory::createBranch(allBranches[this->getNumChoice() - 1]);
 		//Change the current screen to branch options
 		this->currentScreen_ = "BranchOptions";
+
+		//this->selectedBranch_->createData(this->selectedBranch_);
+		this->selectedBranch_->importData();
 	}
 	else if (this->currentScreen_ == "BranchOptions")
 	{
@@ -512,9 +515,6 @@ void MainInterface::display(ShoppingBasket* basket)
 	}
 	else if (this->currentScreen_ == "BranchItems")
 	{
-		//this->selectedBranch_->createData(this->selectedBranch_);
-		this->selectedBranch_->importData(this->selectedBranch_);
-
 		this->setNumOfOptions(selectedBranch_->getStoreItems().size() + 3);
 
 		cout << this->getNumChoice() << endl;

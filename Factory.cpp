@@ -1,5 +1,6 @@
 #include "Factory.h"
 
+//Allows you to save an order to the branch to keep it for exporting
 void Branch::saveOrderToBranch(Order order, string type)
 {
 	if (type == "Online")
@@ -12,18 +13,21 @@ void Branch::saveOrderToBranch(Order order, string type)
 	}
 }
 
-void Branch::setStoreItems(const string& item, const string& price)
+//Allows you to add items to the branch
+void Branch::addItemToBranch(string item, string price)
 {
-	vector<string> tmpItem = { item, price };
-	branchItems.push_back(tmpItem);
+	vector<string> itemGroup = { item, price };
+	branchItems.push_back(itemGroup);
 }
 
-void Branch::setStoreAccesories(const string& item, const string& price)
+//Allows you to add accesories to the branch
+void Branch::addAccesoryToBranch(string item, string price)
 {
-	vector<string> tmpItem = { item, price };
-	branchAccesories.push_back(tmpItem);
+	vector<string> itemGroup = { item, price };
+	branchAccesories.push_back(itemGroup);
 }
 
+//Creates the json object which stores all of branches item data
 void branchDataToJson(json& j, const Branch* b) {
 	j = json{
 		{"Branch", b->getName()},
@@ -32,16 +36,9 @@ void branchDataToJson(json& j, const Branch* b) {
 	};
 }
 
-void branchDataFromJson(const json& j, Branch* b) {
-	// Use the at() function to retrieve values from the JSON object and pass them to setStoreItems() and setStoreAccessories().
-	// If the JSON object contains multiple items or accessories, you may need to use a loop to iterate over them.
-	b->setStoreItems(j.at("Items").at(0).at(0).get<string>(), j.at("Items").at(0).at(1).get<string>());
-	//b->setStoreAccesories(j.at("Accessories").at(0).at(0).get<string>(), j.at("Accessories").at(0).at(1).get<string>());
-}
-
+//Creates the json file the data for this is created from the branchDataToJson function
 void Branch::createData(Branch* branch)
 {
-	// create JSON object
 	json myJson;
 	branchDataToJson(myJson, branch);
 	ofstream outFile(branch->getName() + "_Items.json");
@@ -49,21 +46,24 @@ void Branch::createData(Branch* branch)
 	outFile.close();
 }
 
-void Branch::importData(Branch* branch)
+void Branch::importData()
 {
-	ifstream f(branch->getName() + "_Items.json", ifstream::in);
+	ifstream f(this->getName() + "_Items.json", ifstream::in);
 
 	json myJson; // create uninitialized json object
 
 	f >> myJson; // initialize json object with what was read from file
 
-	//std::cout << myJson << std::endl; // prints json object to screen
+	for (int i = 0; i < myJson["Items"].size(); i++)
+	{
+		this->addItemToBranch(myJson["Items"].at(i).at(0), myJson["Items"].at(i).at(1));
+	}
 
-	cout << myJson["Accesories"];
-	cout << myJson["Accesories"].size() << endl;
+	for (int i = 0; i < myJson["Accesories"].size(); i++)
+	{
+		this->addAccesoryToBranch(myJson["Accesories"].at(i).at(0), myJson["Accesories"].at(i).at(1));
+	}
 }
-
-
 
 vector<Order> Branch::getBranchOrders(string type)
 {
