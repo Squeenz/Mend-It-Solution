@@ -59,6 +59,7 @@ Order::Order(string branch, string type, vector<pair<Product*, ProductDecorator*
 		cout << "ORDER COST: $" << total << endl << endl;
 
 		this->setStatus(currentState);
+		this_thread::sleep_for(chrono::seconds(3));
 	};
 
 	cout << "Order Tracking" << endl;

@@ -547,10 +547,54 @@ void MainInterface::display(ShoppingBasket* basket)
 				this->resetChoices();
 			}
 		}
+		else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() != 0)
+		{
+			this->currentScreen_ = "DeliveryOptions";
+		}
+		//If the basket is not empty and the choice is remove item then it will run the code below
+		else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() != 0)
+		{
+			bool goBack = false;
+			//Run this while loop untill the user decides to go back to the privous menu
+			while (!goBack)
+			{
+				//Remove item from the basket
+				this->removeItem(basket);
+				//If the choice is go back then it will end the while loop
+				//clear the screen and re-draw the header, branch items
+				//change back the input type to be int and show the basket.
+				//also reset the choices of the user so it doesn't automaticly select another item
+				if (this->getNumChoice() == this->getNumOfOptions())
+				{
+					this->resetChoices();
+					goBack = true;
+					system("CLS");
+					this->header(selectedBranch_->getName());
+					this->branchItems(basket);
+					this->typeOfInput_ = true;
+					this->infoCase_ = 0;
+					basket->setShow(true);
+				}
+			}
+		}
+		//If the user selects the remove item option and the basket is empty it will return an instruction
+		//warning the user there are no items in the basket
+		else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() == 0)
+		{
+			this->infoCase_ = 10;
+		}
+		else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() == 0)
+		{
+			this->infoCase_ = 12;
+		}
 	}
 	else if (this->currentScreen_ == "OrderTracking")
 	{
 		this->orderTracking();
+	}
+	else if (this->currentScreen_ == "DeliveryOptions")
+	{
+		this->deliveryOptions(basket);
 	}
 
 }
@@ -718,46 +762,6 @@ void MainInterface::branchItems(ShoppingBasket* basket)
 			this->resetChoices();
 		}
 	}
-	//If the basket is not empty and the choice is remove item then it will run the code below
-	else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() != 0 )
-	{
-		bool goBack = false;
-		//Run this while loop untill the user decides to go back to the privous menu
-		while (!goBack)
-		{	
-			//Remove item from the basket
-			this->removeItem(basket);
-			//If the choice is go back then it will end the while loop
-			//clear the screen and re-draw the header, branch items
-			//change back the input type to be int and show the basket.
-			//also reset the choices of the user so it doesn't automaticly select another item
-			if (this->getNumChoice() == this->getNumOfOptions())
-			{
-				this->resetChoices();
-				goBack = true;
-				system("CLS");
-				this->header(selectedBranch_->getName());
-				this->branchItems(basket);
-				this->typeOfInput_ = true;
-				this->infoCase_ = 0;
-				basket->setShow(true);
-			}
-		}
-	}
-	//If the user selects the remove item option and the basket is empty it will return an instruction
-	//warning the user there are no items in the basket
-	else if (this->getNumChoice() == this->getNumOfOptions() - 2 && basket->getItems().size() == 0)
-	{
-		this->infoCase_ = 10;
-	}
-	else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() != 0)
-	{
-		this->deliveryOptions(basket);
-	}
-	else if (this->getNumChoice() == this->getNumOfOptions() - 1 && basket->getItems().size() == 0)
-	{
-		this->infoCase_ = 12;
-	}
 }
 
 void MainInterface::deliveryOptions(ShoppingBasket* basket)
@@ -784,8 +788,7 @@ void MainInterface::deliveryOptions(ShoppingBasket* basket)
 	}
 	cout << "      " << this->getNumOfOptions() << " :: " << "Go Back" << endl << endl;
 
-	this->resetChoices();
-	this->getInputAndCheck(true);
+	this->getInputAndCheck(this->typeOfInput_);
 
 	Product* item = new Item("Delivery", 0);
 
@@ -803,12 +806,10 @@ void MainInterface::deliveryOptions(ShoppingBasket* basket)
 	}
 	else if (this->getNumChoice() == this->getNumOfOptions())
 	{
-		system("CLS");
+		this->typeOfInput_ = true;
 		this->resetChoices();
-		this->infoCase_ = 0;
-		this->header(selectedBranch_->getName());
 		basket->setShow(true);
-		this->branchItems(basket);
+		this->currentScreen_ = "BranchItems";
 	};
 
 }
@@ -830,7 +831,7 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 	}
 
 	this->information(11);
-	//this->getInputAndCheck(typeOfInput_);
+	this->getInputAndCheck(typeOfInput_);
 
 	for (int i = 0; i < options.size(); i++)
 	{
@@ -845,11 +846,6 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 			this->currentScreen_ = "BranchOptions";
 			this->resetChoices();
 			system("CLS");
-			this->infoCase_ = 2;
-
-			//this->typeOfInput_ = true;
-			this->header(this->selectedBranch_->getName());
-			this->branchOptions();
 		}
 	}
 };
