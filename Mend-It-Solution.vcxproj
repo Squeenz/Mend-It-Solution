@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Factory.h" />
+    <ClInclude Include="Json.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h" />

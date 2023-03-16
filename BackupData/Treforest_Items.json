@@ -1,0 +1,35 @@
+{
+    "Accesories": [
+        [
+            "gloves",
+            "5"
+        ],
+        [
+            "safety glasses",
+            "10"
+        ],
+        [
+            "mask",
+            "15"
+        ]
+    ],
+    "Branch": "Treforest",
+    "Items": [
+        [
+            "hammer",
+            "100"
+        ],
+        [
+            "screwdriver",
+            "50"
+        ],
+        [
+            "wrench",
+            "30"
+        ],
+        [
+            "nail",
+            "1"
+        ]
+    ]
+}

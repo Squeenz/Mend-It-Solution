@@ -512,6 +512,9 @@ void MainInterface::display(ShoppingBasket* basket)
 	}
 	else if (this->currentScreen_ == "BranchItems")
 	{
+		//this->selectedBranch_->createData(this->selectedBranch_);
+		this->selectedBranch_->importData(this->selectedBranch_);
+
 		this->setNumOfOptions(selectedBranch_->getStoreItems().size() + 3);
 
 		cout << this->getNumChoice() << endl;
