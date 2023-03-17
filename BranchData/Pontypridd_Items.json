@@ -1,0 +1,37 @@
+{
+    "Accessories": [
+        [
+            "tape measure",
+            "5"
+        ],
+        [
+            "level",
+            "10"
+        ],
+        [
+            "utility knife",
+            "15"
+        ]
+    ],
+    "Branch": "Pontypridd",
+    "InstoreOrders": [],
+    "Items": [
+        [
+            "drill",
+            "100"
+        ],
+        [
+            "saw",
+            "50"
+        ],
+        [
+            "pliers",
+            "30"
+        ],
+        [
+            "bolt",
+            "1"
+        ]
+    ],
+    "OnlineOrders": []
+}

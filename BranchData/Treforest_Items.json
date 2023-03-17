@@ -1,0 +1,50 @@
+{
+    "Accessories": [
+        [
+            "gloves",
+            "5"
+        ],
+        [
+            "safety glasses",
+            "10"
+        ],
+        [
+            "mask",
+            "15"
+        ]
+    ],
+    "Branch": "Treforest",
+    "InstoreOrders": [],
+    "Items": [
+        [
+            "hammer",
+            "100"
+        ],
+        [
+            "screwdriver",
+            "50"
+        ],
+        [
+            "wrench",
+            "30"
+        ],
+        [
+            "nail",
+            "1"
+        ]
+    ],
+    "OnlineOrders": [
+        {
+            "Branch": "Treforest",
+            "OrderDate": "17-03-2023",
+            "OrderID": "f8YeHbC0zK",
+            "OrderType": "online"
+        },
+        {
+            "Branch": "Treforest",
+            "OrderDate": "17-03-2023",
+            "OrderID": "ZlY67oYZdI",
+            "OrderType": "online"
+        }
+    ]
+}

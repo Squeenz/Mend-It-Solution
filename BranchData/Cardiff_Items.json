@@ -1,0 +1,37 @@
+{
+    "Accessories": [
+        [
+            "sandpaper",
+            "5"
+        ],
+        [
+            "drop cloth",
+            "10"
+        ],
+        [
+            "painter's tape",
+            "15"
+        ]
+    ],
+    "Branch": "Cardiff",
+    "InstoreOrders": [],
+    "Items": [
+        [
+            "paint",
+            "100"
+        ],
+        [
+            "brush",
+            "50"
+        ],
+        [
+            "roller",
+            "30"
+        ],
+        [
+            "putty knife",
+            "1"
+        ]
+    ],
+    "OnlineOrders": []
+}

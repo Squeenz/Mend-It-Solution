@@ -1,4 +1,2 @@
-﻿  Factory.cpp
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Factory.cpp(90,61): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\Factory.cpp(90,61): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
-  Mend-It-Solution.vcxproj -> C:\Users\zilvi\OneDrive\Documents\GitHub\Mend-It-Solution\x64\Debug\Mend-It-Solution.exe
+﻿  Source.cpp
+  Mend-It-Solution.vcxproj -> C:\Users\YOGI\Documents\GitHub\Mend-It-Solution\x64\Debug\Mend-It-Solution.exe

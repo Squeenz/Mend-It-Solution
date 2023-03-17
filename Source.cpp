@@ -2,7 +2,7 @@
 #include "Factory.h"
 #include "Product.h"
 #include "Observer.h"
-#include "Singleton.h"
+#include "Interface.h"
 #include "Windows.h"
 
 using namespace std;
