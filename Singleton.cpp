@@ -869,7 +869,11 @@ void MainInterface::paymentAndOrder(ShoppingBasket* basket)
 			basket->orderBasketItems(this->selectedBranch_);
 			basket->clear();
 
+			json myJson; // create uninitialized json object
+			this->selectedBranch_->exportOrders(myJson, this->selectedBranch_);
+
 			this->currentScreen_ = "BranchOptions";
+
 			this->resetChoices();
 			system("CLS");
 		}
@@ -882,12 +886,12 @@ void MainInterface::orderTracking()
 	this->header(this->selectedBranch_->getName());
 	this->setNumOfOptions(1);
 	
-	if (this->selectedBranch_->getBranchOrders("Online").size() != 0)
+	if (this->selectedBranch_->getBranchOnlineOrders().size() != 0)
 	{
 		OrderTracker tracker1(this->selectedBranch_->getName() + "  Online");
 		Subject onlineOrderSub;
 		onlineOrderSub.Attach(&tracker1);
-		onlineOrderSub.Notify(this->selectedBranch_->getBranchOrders("Online"));
+		onlineOrderSub.Notify(this->selectedBranch_->getBranchOnlineOrders());
 		onlineOrderSub.Detach(&tracker1);
 	}
 	else
@@ -895,12 +899,12 @@ void MainInterface::orderTracking()
 		this->infoCase_ = 13;
 	}
 
-	if (this->selectedBranch_->getBranchOrders("Instore").size() != 0)
+	if (this->selectedBranch_->getBranchInstoreOrders().size() != 0)
 	{
 		OrderTracker tracker2(this->selectedBranch_->getName() + "  Instore");
 		Subject instoreOrderSub;
 		instoreOrderSub.Attach(&tracker2);
-		instoreOrderSub.Notify(this->selectedBranch_->getBranchOrders("Instore"));
+		instoreOrderSub.Notify(this->selectedBranch_->getBranchInstoreOrders());
 		instoreOrderSub.Detach(&tracker2);
 	}
 	else

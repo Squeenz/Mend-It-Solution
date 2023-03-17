@@ -11,7 +11,6 @@ int main()
 {
 	//Create the interface which will display and link everything together
 	MainInterface* ClientInterface = new MainInterface;
-
 	delete ClientInterface;
 	return 0;
 }

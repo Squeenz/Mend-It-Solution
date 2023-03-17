@@ -26,12 +26,13 @@ public:
 	virtual vector<vector<string>> getStoreAccesories() const = 0;
 	virtual vector<vector<string>> getDefaultStoreItems() const = 0;
 	virtual vector<vector<string>> getDefaultStoreAccesories() const = 0;
-	vector<Order> getBranchOrders(string type);
+	virtual vector<Order> getBranchOnlineOrders() const = 0;
+	virtual vector<Order> getBranchInstoreOrders() const = 0;
+	void exportOrders(json& j, const Branch* b);
 	void addItemToBranch(string item, string price);
 	void addAccesoryToBranch(string item, string price);
 	void createData(Branch* branch);
 	void importData();
-	void exportData(Order* orders);
 	void saveOrderToBranch(Order order, string type);
 };
 
@@ -47,6 +48,8 @@ public:
 	vector<vector<string>> getStoreAccesories() const override;
 	vector<vector<string>> getDefaultStoreItems() const override;
 	vector<vector<string>> getDefaultStoreAccesories() const override;
+	vector<Order> getBranchOnlineOrders() const override;
+	vector<Order> getBranchInstoreOrders() const override;
 };
 
 class Pontypridd : public Branch
@@ -60,6 +63,8 @@ public:
 	vector<vector<string>> getStoreAccesories() const override;
 	vector<vector<string>> getDefaultStoreItems() const override;
 	vector<vector<string>> getDefaultStoreAccesories() const override;
+	vector<Order> getBranchOnlineOrders() const override;
+	vector<Order> getBranchInstoreOrders() const override;
 };
 
 class Cardiff : public Branch
@@ -73,6 +78,8 @@ public:
 	vector<vector<string>> getStoreAccesories() const override;
 	vector<vector<string>> getDefaultStoreItems() const override;
 	vector<vector<string>> getDefaultStoreAccesories() const override;
+	vector<Order> getBranchOnlineOrders() const override;
+	vector<Order> getBranchInstoreOrders() const override;
 };
 
 class BranchFactory

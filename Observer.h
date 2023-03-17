@@ -13,7 +13,6 @@
 
 using namespace std;
 
-//set up the observer pattern
 class Order
 {
 private:

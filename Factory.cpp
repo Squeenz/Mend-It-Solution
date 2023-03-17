@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include "Factory.h"
+#include "Observer.h"
 
 //Allows you to save an order to the branch to keep it for exporting
 void Branch::saveOrderToBranch(Order order, string type)
@@ -34,7 +35,48 @@ void defaultBranchDataToJson(json& j, const Branch* b) {
 		{"Branch", b->getName()},
 		{"Items", b->getDefaultStoreItems()},
 		{"Accessories", b->getDefaultStoreAccesories()},
+		{"OnlineOrders", json::array()},
+		{"InstoreOrders", json::array()}
 	};
+}
+
+//Reads the existing json file and edits it
+void Branch::exportOrders(json& j, const Branch* b) {
+	ifstream f("BranchData/" + b->getName() + "_Items.json", ifstream::in);
+	json myJson;
+	f >> myJson;
+	f.close();
+	defaultBranchDataToJson(myJson, b);
+	// add online orders
+	if (!b->getBranchOnlineOrders().empty()) {
+		for (auto& order : b->getBranchOnlineOrders()) {
+			json orderJson = {
+				{"OrderID", order.getID()},
+				{"OrderDate", order.getDate()},
+				{"OrderType", "online"},
+				{"Branch", order.getBranch()}
+			};
+			myJson["OnlineOrders"].push_back(orderJson);
+		}
+	}
+	// add instore orders
+	if (!b->getBranchInstoreOrders().empty()) {
+		for (auto& order : b->getBranchInstoreOrders()) {
+			json orderJson = {
+				{"OrderID", order.getID()},
+				{"OrderDate", order.getDate()},
+				{"OrderType", "instore"},
+				{"Branch", order.getBranch()}
+			};
+			myJson["InstoreOrders"].push_back(orderJson);
+		}
+	}
+
+	// write the modified json object back to file
+	ofstream outFile("BranchData/" + b->getName() + "_Items.json");
+	outFile << std::setw(4) << myJson.dump(4);
+	outFile.close();
+
 }
 
 //Creates the json file, the data for this is created from the branchDataToJson function
@@ -116,18 +158,6 @@ void Branch::importData()
 	}
 }
 
-vector<Order> Branch::getBranchOrders(string type)
-{
-	if (type == "Online")
-	{
-		return this->onlineOrders;
-	}
-	else if (type == "Instore")
-	{
-		return this->instoreOrders;
-	}
-}
-
 //Treforest Branch public methods
 string Treforest::getName() const
 {
@@ -149,7 +179,14 @@ vector<vector<string>> Treforest::getDefaultStoreAccesories() const
 {
 	return defaultAccesories;
 }
-
+vector<Order> Treforest::getBranchOnlineOrders() const
+{
+	return onlineOrders;
+}
+vector<Order> Treforest::getBranchInstoreOrders() const
+{
+	return instoreOrders;
+}
 
 //Pontypridd Branch public methods
 string Pontypridd::getName() const
@@ -171,6 +208,14 @@ vector<vector<string>> Pontypridd::getDefaultStoreItems() const
 vector<vector<string>> Pontypridd::getDefaultStoreAccesories() const
 {
 	return defaultAccesories;
+}
+vector<Order> Pontypridd::getBranchOnlineOrders() const
+{
+	return onlineOrders;
+}
+vector<Order> Pontypridd::getBranchInstoreOrders() const
+{
+	return instoreOrders;
 }
 
 //Cardiff Branch public methods
@@ -194,7 +239,14 @@ vector<vector<string>> Cardiff::getDefaultStoreAccesories() const
 {
 	return defaultAccesories;
 }
-
+vector<Order> Cardiff::getBranchOnlineOrders() const 
+{
+	return onlineOrders;
+}
+vector<Order> Cardiff::getBranchInstoreOrders() const 
+{
+	return instoreOrders;
+}
 
 //Branch Factory, creates the different branch objects
 Branch* BranchFactory::createBranch(const string& branchName)
