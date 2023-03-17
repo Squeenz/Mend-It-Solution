@@ -54,8 +54,17 @@ void Branch::exportOrders(json& j, const Branch* b) {
 				{"OrderID", order.getID()},
 				{"OrderDate", order.getDate()},
 				{"OrderType", "online"},
-				{"Branch", order.getBranch()}
+				{"Branch", order.getBranch()},
+				{"Items", {}}
 			};
+			auto items = order.getItems();
+			for (auto& item : items) {
+				json itemJson = {
+					{"ProductName", item.second->description()},
+					{"ProductPrice", item.second->price()}
+				};
+				orderJson["Items"].push_back(itemJson);
+			}
 			myJson["OnlineOrders"].push_back(orderJson);
 		}
 	}
@@ -66,8 +75,17 @@ void Branch::exportOrders(json& j, const Branch* b) {
 				{"OrderID", order.getID()},
 				{"OrderDate", order.getDate()},
 				{"OrderType", "instore"},
-				{"Branch", order.getBranch()}
+				{"Branch", order.getBranch()},
+				{"Items", {}}
 			};
+			auto items = order.getItems();
+			for (auto& item : items) {
+				json itemJson = {
+					{"ProductName", item.second->description()},
+					{"ProductPrice", item.second->price()}
+				};
+				orderJson["Items"].push_back(itemJson);
+			}
 			myJson["InstoreOrders"].push_back(orderJson);
 		}
 	}
@@ -76,7 +94,6 @@ void Branch::exportOrders(json& j, const Branch* b) {
 	ofstream outFile("BranchData/" + b->getName() + "_Items.json");
 	outFile << std::setw(4) << myJson.dump(4);
 	outFile.close();
-
 }
 
 //Creates the json file, the data for this is created from the branchDataToJson function
@@ -134,10 +151,10 @@ void Branch::createData(Branch* branch)
 }
 
 //Import data from the json files when called
-void Branch::importData()
+void Branch::importData(Branch* branch)
 {
 	//read the json file
-	ifstream f("BranchData/"+ this->getName() + "_Items.json", ifstream::in);
+	ifstream f("BranchData/" + this->getName() + "_Items.json", ifstream::in);
 
 	json myJson; // create uninitialized json object
 
@@ -150,11 +167,78 @@ void Branch::importData()
 		this->addItemToBranch(myJson["Items"].at(i).at(0), myJson["Items"].at(i).at(1));
 	}
 
-	//loop through the arrays in the json file and add each accesory to the branch
+	//loop through the arrays in the json file and add each accessory to the branch
 	for (int i = 0; i < myJson["Accessories"].size(); i++)
 	{
-		//add the accesory to the branch
+		//add the accessory to the branch
 		this->addAccesoryToBranch(myJson["Accessories"].at(i).at(0), myJson["Accessories"].at(i).at(1));
+	}
+
+	// loop through the online orders array in the json file and create a new order for each
+	for (int i = 0; i < myJson["OnlineOrders"].size(); i++)
+	{
+		// get the order information from the json
+		string orderID = myJson["OnlineOrders"].at(i).at("OrderID");
+		string orderDate = myJson["OnlineOrders"].at(i).at("OrderDate");
+		string orderBranch = myJson["OnlineOrders"].at(i).at("Branch");
+
+
+		// get the items array from the json
+		auto itemsJson = myJson["OnlineOrders"].at(i).at("Items");
+
+		// loop through the items array and add each item to the order
+		for (int j = 0; j < itemsJson.size(); j++)
+		{
+
+			vector<pair<Product*, ProductDecorator*>> tmpVector = {};
+
+			// get the product information from the json
+			string productName = itemsJson.at(j).at("ProductName");
+			double productPrice = itemsJson.at(j).at("ProductPrice");
+
+			Product* item = new Item(productName, productPrice);
+			Accessory* accesory = new Accessory(item, "", 0);
+
+			tmpVector.push_back(make_pair(item, accesory));
+
+			Order order = Order(orderBranch, "Online", tmpVector, true);
+
+			branch->saveOrderToBranch(order, "Online");
+		}
+	}
+
+
+	// loop through the online orders array in the json file and create a new order for each
+	for (int i = 0; i < myJson["InstoreOrders"].size(); i++)
+	{
+		// get the order information from the json
+		string orderID = myJson["InstoreOrders"].at(i).at("OrderID");
+		string orderDate = myJson["InstoreOrders"].at(i).at("OrderDate");
+		string orderBranch = myJson["InstoreOrders"].at(i).at("Branch");
+
+
+		// get the items array from the json
+		auto itemsJson = myJson["InstoreOrders"].at(i).at("Items");
+
+		// loop through the items array and add each item to the order
+		for (int j = 0; j < itemsJson.size(); j++)
+		{
+
+			vector<pair<Product*, ProductDecorator*>> tmpVector = {};
+
+			// get the product information from the json
+			string productName = itemsJson.at(j).at("ProductName");
+			double productPrice = itemsJson.at(j).at("ProductPrice");
+
+			Product* item = new Item(productName, productPrice);
+			Accessory* accesory = new Accessory(item, "", 0);
+
+			tmpVector.push_back(make_pair(item, accesory));
+
+			Order order = Order(orderBranch, "Instore", tmpVector, true);
+
+			branch->saveOrderToBranch(order, "Instore");
+		}
 	}
 }
 

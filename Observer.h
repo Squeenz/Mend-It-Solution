@@ -24,7 +24,7 @@ private:
 	vector<pair<Product*, ProductDecorator*>> items_;
 	string generateID(const int len);
 public:
-	Order(string branch, string type, vector<pair<Product*, ProductDecorator*>> items);
+	Order(string branch, string type, vector<pair<Product*, ProductDecorator*>> items, bool import);
 	string getBranch();
 	string setID();
 	string getID();

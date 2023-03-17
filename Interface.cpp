@@ -413,8 +413,7 @@ void ShoppingBasket::payment(const vector<string> options, string typeOfPayment)
 //Order the items of the shoping basket
 void ShoppingBasket::orderBasketItems(Branch* selectedBranch)
 {
-	//string branch, string type, vector<pair<Product*, Accessory*>> items
-	Order order = Order(selectedBranch->getName(), "Online", this->basket_);
+	Order order = Order(selectedBranch->getName(), "Online", this->basket_, false);
 	selectedBranch->saveOrderToBranch(order, "Online");
 }
 
@@ -481,7 +480,7 @@ void MainInterface::display(ShoppingBasket* basket)
 		this->currentScreen_ = "BranchOptions";
 
 		//Import the json data that has been created or is there
-		this->selectedBranch_->importData();
+		this->selectedBranch_->importData(this->selectedBranch_);
 	}
 	else if (this->currentScreen_ == "BranchOptions")
 	{

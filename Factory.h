@@ -32,7 +32,7 @@ public:
 	void addItemToBranch(string item, string price);
 	void addAccesoryToBranch(string item, string price);
 	void createData(Branch* branch);
-	void importData();
+	void importData(Branch* branch);
 	void saveOrderToBranch(Order order, string type);
 };
 

@@ -14,7 +14,24 @@
         ]
     ],
     "Branch": "Pontypridd",
-    "InstoreOrders": [],
+    "InstoreOrders": [
+        {
+            "Branch": "Pontypridd",
+            "Items": [
+                {
+                    "ProductName": "drill, ",
+                    "ProductPrice": 100.0
+                },
+                {
+                    "ProductName": "Delivery, Next Day Delivery",
+                    "ProductPrice": 15.5
+                }
+            ],
+            "OrderDate": "17-03-2023",
+            "OrderID": "fsEpqfCgCK",
+            "OrderType": "online"
+        }
+    ],
     "Items": [
         [
             "drill",
@@ -33,5 +50,22 @@
             "1"
         ]
     ],
-    "OnlineOrders": []
+    "OnlineOrders": [
+        {
+            "Branch": "Pontypridd",
+            "Items": [
+                {
+                    "ProductName": "drill, ",
+                    "ProductPrice": 100.0
+                },
+                {
+                    "ProductName": "Delivery, Next Day Delivery",
+                    "ProductPrice": 15.5
+                }
+            ],
+            "OrderDate": "17-03-2023",
+            "OrderID": "fsEpqfCgCK",
+            "OrderType": "online"
+        }
+    ]
 }

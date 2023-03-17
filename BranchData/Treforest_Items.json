@@ -36,14 +36,46 @@
     "OnlineOrders": [
         {
             "Branch": "Treforest",
+            "Items": [
+                {
+                    "ProductName": "hammer, ",
+                    "ProductPrice": 100.0
+                },
+                {
+                    "ProductName": "screwdriver, ",
+                    "ProductPrice": 50.0
+                },
+                {
+                    "ProductName": "wrench, ",
+                    "ProductPrice": 30.0
+                },
+                {
+                    "ProductName": "wrench, ",
+                    "ProductPrice": 30.0
+                },
+                {
+                    "ProductName": "Delivery, Next Day Delivery",
+                    "ProductPrice": 15.5
+                }
+            ],
             "OrderDate": "17-03-2023",
-            "OrderID": "f8YeHbC0zK",
+            "OrderID": "ZlY67oYZdI",
             "OrderType": "online"
         },
         {
             "Branch": "Treforest",
+            "Items": [
+                {
+                    "ProductName": "wrench, safety glasses",
+                    "ProductPrice": 40.0
+                },
+                {
+                    "ProductName": "Delivery, Next Day Delivery",
+                    "ProductPrice": 15.5
+                }
+            ],
             "OrderDate": "17-03-2023",
-            "OrderID": "ZlY67oYZdI",
+            "OrderID": "0pxReYX5\u0000o",
             "OrderType": "online"
         }
     ]

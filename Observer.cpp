@@ -21,62 +21,71 @@ string Order::generateID(const int len)
 
 //Order constructor, when the order is created it will display the information below
 //to the user
-Order::Order(string branch, string type, vector<pair<Product*, ProductDecorator*>> items) : branch_(branch), type_(type), items_(items)
+Order::Order(string branch, string type, vector<pair<Product*, ProductDecorator*>> items, bool import) : branch_(branch), type_(type), items_(items)
 {
-	vector<string> state = { "Processing", "Confirmed"};
-	string currentState = "";
-
-	this->setID();
-	this->getDate();
-
-	for (int i = 0; i < state.size(); i++)
+	if (import == false)
 	{
-		system("CLS");
-		currentState = state[i];
-		cout << "=================================" << endl;
-		cout << "	ORDER DETAILS WITH TRACKING	  " << endl;
-		cout << "=================================" << endl;
-		cout << "ORDER ID : " << this->id_ << endl << endl;
-		cout << "CURRENT ORDER STATUS : " << currentState << endl << endl;
-		cout << "ORDER TYPE : " << this->type_ << endl << endl;
-		cout << "BRANCH : " << this->branch_ << endl << endl;
-		cout << "DELIVERY DATE : " << this->date_ << endl << endl;
-		cout << "=================================" << endl;
-		cout << "ORDER ITEMS" << endl;
+		vector<string> state = { "Processing", "Confirmed" };
+		string currentState = "";
 
-		double total = 0;
-		if (items.size() != 0)
+		this->setID();
+		this->getDate();
+
+		for (int i = 0; i < state.size(); i++)
 		{
-			for (int i = 0; i < items.size(); i++)
+			system("CLS");
+			currentState = state[i];
+			cout << "=================================" << endl;
+			cout << "	ORDER DETAILS WITH TRACKING	  " << endl;
+			cout << "=================================" << endl;
+			cout << "ORDER ID : " << this->id_ << endl << endl;
+			cout << "CURRENT ORDER STATUS : " << currentState << endl << endl;
+			cout << "ORDER TYPE : " << this->type_ << endl << endl;
+			cout << "BRANCH : " << this->branch_ << endl << endl;
+			cout << "DELIVERY DATE : " << this->date_ << endl << endl;
+			cout << "=================================" << endl;
+			cout << "ORDER ITEMS" << endl;
+
+			double total = 0;
+			if (items.size() != 0)
 			{
-				cout << " " << items[i].second->description() << endl;
+				for (int i = 0; i < items.size(); i++)
+				{
+					cout << " " << items[i].second->description() << endl;
 
-				total = total + items[i].second->price();
+					total = total + items[i].second->price();
+				}
 			}
-		}
-		cout << endl;
+			cout << endl;
 
-		cout << "ORDER COST: $" << total << endl << endl;
-
+			cout << "ORDER COST: $" << total << endl << endl;
 
 
-		this->setStatus(currentState);
+
+			this->setStatus(currentState);
+			this_thread::sleep_for(chrono::seconds(3));
+		};
+
+		cout << "Order Tracking" << endl;
+		cout << "============================================================" << endl;
+
+		cout << "[ ORDER ID: " << this->getID() << ", DATE: " << this->getDate() << ", STATUS: " << this->getStatus() << ", BRANCH: " << this->getBranch() << " ]" << endl;
 		this_thread::sleep_for(chrono::seconds(3));
-	};
 
-	cout << "Order Tracking" << endl;
-	cout << "============================================================" << endl;
+		this->setStatus("Sent");
+		cout << "[ ORDER ID: " << this->getID() << ", DATE: " << this->getDate() << ", STATUS: " << this->getStatus() << ", BRANCH: " << this->getBranch() << " ]" << endl;
+		this_thread::sleep_for(chrono::seconds(5));
 
-	cout << "[ ORDER ID: " << this->getID() << ", DATE: " << this->getDate() << ", STATUS: " << this->getStatus() << ", BRANCH: " << this->getBranch() << " ]" << endl;
-	this_thread::sleep_for(chrono::seconds(3));
-
-	this->setStatus("Sent");
-	cout << "[ ORDER ID: " << this->getID() << ", DATE: " << this->getDate() << ", STATUS: " << this->getStatus() << ", BRANCH: " << this->getBranch() << " ]" << endl;
-	this_thread::sleep_for(chrono::seconds(5));
-
-	this->setStatus("Delivered");
-	cout << "[ ORDER ID: " << this->getID() << ", DATE: " << this->getDate() << ", STATUS: " << this->getStatus() << ", BRANCH: " << this->getBranch() << " ]" << endl;
-	this_thread::sleep_for(chrono::seconds(3));
+		this->setStatus("Delivered");
+		cout << "[ ORDER ID: " << this->getID() << ", DATE: " << this->getDate() << ", STATUS: " << this->getStatus() << ", BRANCH: " << this->getBranch() << " ]" << endl;
+		this_thread::sleep_for(chrono::seconds(3));
+	}
+	else
+	{
+		this->setID();
+		this->getDate();
+		this->setStatus("Delivered");
+	}
 }
 
 string Order::getBranch()
