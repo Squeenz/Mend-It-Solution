@@ -33,5 +33,70 @@
             "1"
         ]
     ],
-    "OnlineOrders": []
+    "OnlineOrders": [
+        {
+            "Branch": "Cardiff",
+            "Items": [
+                {
+                    "ProductName": "paint, , ",
+                    "ProductPrice": 100.0
+                },
+                {
+                    "ProductName": "brush, , ",
+                    "ProductPrice": 50.0
+                },
+                {
+                    "ProductName": "roller, , ",
+                    "ProductPrice": 30.0
+                },
+                {
+                    "ProductName": "paint, sandpaper, ",
+                    "ProductPrice": 105.0
+                },
+                {
+                    "ProductName": "Delivery, Next Day Delivery, ",
+                    "ProductPrice": 15.5
+                }
+            ],
+            "OrderDate": "18-03-2023",
+            "OrderID": "f8YeHbC0zK",
+            "OrderType": "online"
+        },
+        {
+            "Branch": "Cardiff",
+            "Items": [
+                {
+                    "ProductName": "paint, ",
+                    "ProductPrice": 100.0
+                },
+                {
+                    "ProductName": "brush, ",
+                    "ProductPrice": 50.0
+                },
+                {
+                    "ProductName": "roller, ",
+                    "ProductPrice": 30.0
+                },
+                {
+                    "ProductName": "putty knife, ",
+                    "ProductPrice": 1.0
+                },
+                {
+                    "ProductName": "roller, ",
+                    "ProductPrice": 30.0
+                },
+                {
+                    "ProductName": "roller, ",
+                    "ProductPrice": 30.0
+                },
+                {
+                    "ProductName": "Delivery, Express Delivery",
+                    "ProductPrice": 5.5
+                }
+            ],
+            "OrderDate": "18-03-2023",
+            "OrderID": "ZlY67oYZdI",
+            "OrderType": "online"
+        }
+    ]
 }

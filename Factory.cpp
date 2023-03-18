@@ -186,11 +186,11 @@ void Branch::importData(Branch* branch)
 		// get the items array from the json
 		auto itemsJson = myJson["OnlineOrders"].at(i).at("Items");
 
+		vector<pair<Product*, ProductDecorator*>> tmpVector = {};
+
 		// loop through the items array and add each item to the order
 		for (int j = 0; j < itemsJson.size(); j++)
 		{
-
-			vector<pair<Product*, ProductDecorator*>> tmpVector = {};
 
 			// get the product information from the json
 			string productName = itemsJson.at(j).at("ProductName");
@@ -200,13 +200,14 @@ void Branch::importData(Branch* branch)
 			Accessory* accesory = new Accessory(item, "", 0);
 
 			tmpVector.push_back(make_pair(item, accesory));
-
-			Order order = Order(orderBranch, "Online", tmpVector, true);
-
-			branch->saveOrderToBranch(order, "Online");
 		}
+
+		Order order = Order(orderBranch, "Online", tmpVector, true);
+
+		branch->saveOrderToBranch(order, "Online");
 	}
 
+	vector<pair<Product*, ProductDecorator*>> tmpVector = {};
 
 	// loop through the online orders array in the json file and create a new order for each
 	for (int i = 0; i < myJson["InstoreOrders"].size(); i++)
@@ -224,8 +225,6 @@ void Branch::importData(Branch* branch)
 		for (int j = 0; j < itemsJson.size(); j++)
 		{
 
-			vector<pair<Product*, ProductDecorator*>> tmpVector = {};
-
 			// get the product information from the json
 			string productName = itemsJson.at(j).at("ProductName");
 			double productPrice = itemsJson.at(j).at("ProductPrice");
@@ -234,11 +233,12 @@ void Branch::importData(Branch* branch)
 			Accessory* accesory = new Accessory(item, "", 0);
 
 			tmpVector.push_back(make_pair(item, accesory));
-
-			Order order = Order(orderBranch, "Instore", tmpVector, true);
-
-			branch->saveOrderToBranch(order, "Instore");
 		}
+
+
+		Order order = Order(orderBranch, "Instore", tmpVector, true);
+
+		branch->saveOrderToBranch(order, "Instore");
 	}
 }
 
